@@ -7,6 +7,11 @@ Contact: https://twitter.com/amitxv
 🐱 set your windows language and keyboard layout to english to avoid issues with the backtick key
  
 🐭 enable developer console in the game settings
+
+🐰 remove all launch options for csgo to avoid it interfering with the benchmark
+
+🐰 do not have csgo installed on a HDD
+
 ## Usage
 
 - Download and extract the latest release from the [releases tab](https://github.com/amitxv/csgo-autobenchmark/releases).
@@ -20,3 +25,8 @@ Contact: https://twitter.com/amitxv
 - Run ``csgo-autobenchmark.exe`` and press enter when ready. There is a 7 second timeout to allow you to tab back into the game to give csgo foreground priority.
 
 - Do not touch your PC at all after after this stage until the estimated time is up.
+
+Alternatively you can use this command to start the benchmark if you do not want to manually launch csgo. You must set ``skip_confirmation`` to 1 in the config so that you do not need to press enter to continue.
+```
+start steam://rungameid/730 && timeout -t 60 && csgo-autobenchmark.exe
+```

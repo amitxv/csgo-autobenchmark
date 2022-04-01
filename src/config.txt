@@ -6,3 +6,6 @@ trials=3
 
 // number of trials to execute to build cache
 cache_trials=1
+
+// set to 1 to skip start confirmation
+skip_confirmation=0

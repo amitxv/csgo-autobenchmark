@@ -44,10 +44,15 @@ def main():
     if trials <= 0 or cache_trials < 0:
         raise ValueError('invalid trials or cache_trials in config')
 
+    skip_confirmation = int(parse_config('skip_confirmation'))
+
     log(f'Estimated time: {(40 + ((duration + 15) * cache_trials) + ((duration + 15) * trials))/60:.2f} min')
-    input('Press enter to start benchmarking...')
-    log('Starting in 7 Seconds (tab back into game)')
-    time.sleep(7)
+
+    if not skip_confirmation:
+        input('Press enter to start benchmarking...')
+        log('Starting in 7 Seconds (tab back into game)')
+        time.sleep(7)
+
     send_command('`')
     send_command(f'map {map}')
     log(f'Waiting for map to load')
