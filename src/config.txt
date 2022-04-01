@@ -1,0 +1,8 @@
+// 1 for de_dust2 // 2 for cache
+map=1
+
+// number of trials to benchmark
+trials=3
+
+// number of trials to execute to build cache
+cache_trials=1
