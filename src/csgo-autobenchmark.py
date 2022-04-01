@@ -1,6 +1,5 @@
 import time
 from pynput.keyboard import Controller, Key
-import subprocess
 import pandas
 import os
 
@@ -64,15 +63,12 @@ def main():
 
     output_path = f'captures\\csgo-autobenchmark-{time.strftime("%d%m%y%H%M%S")}'
     os.makedirs(output_path)
-    subprocess_null = {'stdout': subprocess.DEVNULL, 'stderr': subprocess.DEVNULL}
 
     for trial in range(1, trials + 1):
         log(f'Recording Trial: {trial}/{trials}')
         send_command('benchmark')
-        try:
-            subprocess.run(['PresentMon.exe', '-stop_existing_session', '-no_top', '-verbose','-delay', '5', '-timed', f'{duration}', '-process_name', 'csgo.exe', '-output_file', f'{output_path}\\Trial-{trial}.csv'], timeout=duration + 15, **subprocess_null)
-        except subprocess.TimeoutExpired:
-            pass
+        os.popen(f'PresentMon.exe -stop_existing_session -no_top -verbose -delay 5 -timed {duration} -terminate_after_timed -process_name csgo.exe -output_file {output_path}\\Trial-{trial}.csv')
+        time.sleep(duration + 15)
 
     CSVs = []
     for trial in range(1, trials + 1):
