@@ -12,6 +12,8 @@ Contact: https://twitter.com/amitxv
 
 🐰 do not have csgo installed on a HDD
 
+The csgo scripts are property of @samisalreadytaken in which i do not claim ownership of.
+
 ## Usage
 
 - Download and extract the latest release from the [releases tab](https://github.com/amitxv/csgo-autobenchmark/releases).
