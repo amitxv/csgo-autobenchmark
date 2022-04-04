@@ -85,7 +85,9 @@ def main():
         aggregated.to_csv(f'{output_path}\\Aggregated.csv', index=False)
 
     log('Finished')
-    log(f'Raw and aggregated CSVs located in: {output_path}')
+    log(f'Raw and aggregated CSVs located in: {output_path}\n')
+
+    os.system('cmd.exe /k')
 
 if __name__ == '__main__':
     main()
