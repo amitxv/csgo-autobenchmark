@@ -5,14 +5,6 @@ import os
 
 keyboard = Controller()
 
-def parse_config(query):
-    with open('config.txt', 'r') as f:
-        for line in f:
-            if '//' not in line:
-                setting, equ, value = line.rpartition('=')
-                if setting == query:
-                    return value
-
 def log(msg):
     print(f'[{time.strftime("%H:%M")}] CLI: {msg}')
 
@@ -29,22 +21,32 @@ def send_command(command):
 
 
 def main():
-    if int(parse_config('map')) == 1:
+    config = {}
+    with open('config.txt', 'r') as f:
+        for line in f:
+            if '//' not in line:
+                line = line.strip('\n')
+                setting, equ, value = line.rpartition('=')
+                if setting != '' and value != '':
+                    config[setting] = value
+                    
+
+    if int(config['map']) == 1:
         map = 'de_dust2'
         duration = 40
-    elif int(parse_config('map')) == 2:
+    elif int(config['map']) == 2:
         map = 'de_cache'
         duration = 45
     else:
         raise ValueError('invalid map in config')
     
-    trials = int(parse_config('trials'))
-    cache_trials = int(parse_config('cache_trials'))
+    trials = int(config['trials'])
+    cache_trials = int(config['cache_trials'])
 
     if trials <= 0 or cache_trials < 0:
         raise ValueError('invalid trials or cache_trials in config')
 
-    skip_confirmation = int(parse_config('skip_confirmation'))
+    skip_confirmation = int(config['skip_confirmation'])
 
     log(f'Estimated time: {(40 + ((duration + 15) * cache_trials) + ((duration + 15) * trials))/60:.2f} min')
 
