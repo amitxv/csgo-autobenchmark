@@ -10,7 +10,7 @@ Contact: https://twitter.com/amitxv
 
 🐰 remove all launch options for csgo to avoid it interfering with the benchmark
 
-🐰 do not have csgo installed on a HDD
+🐶 do not have csgo installed on a HDD
 
 The csgo scripts are property of @samisalreadytaken in which i do not claim ownership of.
 
@@ -27,6 +27,8 @@ The csgo scripts are property of @samisalreadytaken in which i do not claim owne
 - Run ``csgo-autobenchmark.exe`` and press enter when ready. There is a 7 second timeout to allow you to tab back into the game to give csgo foreground priority.
 
 - Do not touch your PC at all after after this stage until the estimated time is up.
+
+---
 
 Alternatively you can use this command to start the benchmark if you do not want to manually launch csgo. You must set ``skip_confirmation`` to 1 in the config so that you do not need to press enter to continue.
 ```
