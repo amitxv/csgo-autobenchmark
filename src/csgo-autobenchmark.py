@@ -87,7 +87,5 @@ def main():
     log('Finished')
     log(f'Raw and aggregated CSVs located in: {output_path}\n')
 
-    os.system('cmd.exe /k')
-
 if __name__ == '__main__':
     main()
