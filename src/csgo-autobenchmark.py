@@ -5,10 +5,10 @@ import os
 
 keyboard = Controller()
 
-def log(msg):
+def log(msg: str) -> None:
     print(f'[{time.strftime("%H:%M")}] CLI: {msg}')
 
-def send_command(command):
+def send_command(command: str) -> None:
     time.sleep(0.1)
     def keyboard_press(key):
         time.sleep(0.1)
@@ -19,8 +19,7 @@ def send_command(command):
     if command != '`':
         keyboard_press(Key.enter)
 
-
-def main():
+def main() -> None:
     config = {}
     with open('config.txt', 'r') as f:
         for line in f:
@@ -30,7 +29,6 @@ def main():
                 if setting != '' and value != '':
                     config[setting] = value
                     
-
     if int(config['map']) == 1:
         map = 'de_dust2'
         duration = 40
