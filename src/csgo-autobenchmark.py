@@ -1,9 +1,8 @@
 import time
-from pynput.keyboard import Controller, Key
-import pandas
 import os
 import subprocess
-
+from pynput.keyboard import Controller, Key
+import pandas
 keyboard = Controller()
 
 def log(msg: str) -> None:
@@ -24,23 +23,23 @@ def main() -> None:
     subprocess_null = {'stdout': subprocess.DEVNULL, 'stderr': subprocess.DEVNULL}
 
     config = {}
-    with open('config.txt', 'r') as f:
+    with open('config.txt', 'r', encoding='UTF-8') as f:
         for line in f:
             if '//' not in line:
                 line = line.strip('\n')
                 setting, equ, value = line.rpartition('=')
                 if setting != '' and value != '':
                     config[setting] = value
-                    
+
     if int(config['map']) == 1:
-        map = 'de_dust2'
+        cs_map = 'de_dust2'
         duration = 40
     elif int(config['map']) == 2:
-        map = 'de_cache'
+        cs_map = 'de_cache'
         duration = 45
     else:
         raise ValueError('invalid map in config')
-    
+
     trials = int(config['trials'])
     cache_trials = int(config['cache_trials'])
 
@@ -57,8 +56,8 @@ def main() -> None:
         time.sleep(7)
 
     send_command('`')
-    send_command(f'map {map}')
-    log(f'Waiting for map to load')
+    send_command(f'map {cs_map}')
+    log(f'Waiting for {cs_map} to load')
     time.sleep(40)
     send_command('`')
     send_command('exec benchmark')
@@ -78,17 +77,17 @@ def main() -> None:
 
         try:
             subprocess.run([
-                'bin\\PresentMon\\PresentMon.exe', 
-                '-stop_existing_session', 
-                '-no_top', 
+                'bin\\PresentMon\\PresentMon.exe',
+                '-stop_existing_session',
+                '-no_top',
                 '-verbose',
                 '-delay', '5'
                 '-timed', str(duration),
                 '--terminate_after_timed',
-                '-process_name', 'csgo.exe', 
+                '-process_name', 'csgo.exe',
                 '-output_file', f'{output_path}\\Trial-{trial}.csv.csv',
-                ], 
-                timeout=duration + 15, **subprocess_null
+                ],
+                timeout=duration + 15, **subprocess_null, check=False
             )
         except subprocess.TimeoutExpired:
             pass
