@@ -87,7 +87,6 @@ def main() -> None:
         send_command("benchmark")
 
         try:
-            # fmt: off
             subprocess.run([
                 "bin\\PresentMon\\PresentMon.exe",
                 "-stop_existing_session",
@@ -99,7 +98,6 @@ def main() -> None:
                 "-process_name", "csgo.exe",
                 "-output_file", f"{output_path}\\Trial-{trial}.csv.csv",
                 ], timeout=duration + 15, **subprocess_null, check=False)
-            # fmt: on
         except subprocess.TimeoutExpired:
             pass
 
