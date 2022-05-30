@@ -12,15 +12,16 @@ def log(msg: str) -> None:
     print(f"[{time.strftime('%H:%M')}] CLI: {msg}")
 
 
+def keyboard_press(key):
+    """Keyboard keypress action"""
+    time.sleep(0.1)
+    keyboard.press(key)
+    keyboard.release(key)
+
+
 def send_command(command: str) -> None:
     """Sends commands to the foreground window"""
     time.sleep(0.1)
-
-    def keyboard_press(key):
-        time.sleep(0.1)
-        keyboard.press(key)
-        keyboard.release(key)
-
     for char in command:
         keyboard_press(char)
     if command != "`":
@@ -29,7 +30,7 @@ def send_command(command: str) -> None:
 
 def main() -> None:
     """Main application logic"""
-    subprocess_null = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
+    SUBPROCESS_NULL = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
 
     config = {}
     with open("config.txt", "r", encoding="UTF-8") as f:
@@ -94,10 +95,9 @@ def main() -> None:
                 "-verbose",
                 "-delay", "5"
                 "-timed", str(duration),
-                "--terminate_after_timed",
                 "-process_name", "csgo.exe",
-                "-output_file", f"{output_path}\\Trial-{trial}.csv.csv",
-                ], timeout=duration + 15, **subprocess_null, check=False)
+                "-output_file", f"{output_path}\\Trial-{trial}.csv",
+                ], timeout=duration + 15, **SUBPROCESS_NULL, check=False)
         except subprocess.TimeoutExpired:
             pass
 
