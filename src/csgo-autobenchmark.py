@@ -28,7 +28,7 @@ def send_command(command: str) -> None:
         keyboard_press(Key.enter)
 
 
-def main() -> None:
+def main() -> int:
     """Main application logic"""
     SUBPROCESS_NULL = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
 
@@ -48,13 +48,15 @@ def main() -> None:
         cs_map = "de_cache"
         duration = 45
     else:
-        raise ValueError("invalid map in config")
+        print("invalid map in config")
+        return 1
 
     trials = int(config["trials"])
     cache_trials = int(config["cache_trials"])
 
     if trials <= 0 or cache_trials < 0:
-        raise ValueError("invalid trials or cache_trials in config")
+        print("invalid trials or cache_trials in config")
+        return 1
 
     skip_confirmation = int(config["skip_confirmation"])
 
@@ -110,7 +112,9 @@ def main() -> None:
 
     log("Finished")
     log(f"Raw and aggregated CSVs located in: {output_path}\n")
+    
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
