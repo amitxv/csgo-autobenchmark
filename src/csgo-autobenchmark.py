@@ -1,6 +1,7 @@
 import time
 import os
 import subprocess
+import sys
 from pynput.keyboard import Controller, Key
 import pandas
 
