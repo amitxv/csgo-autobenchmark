@@ -32,6 +32,14 @@ def main() -> int:
     """Main application logic"""
     SUBPROCESS_NULL = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
 
+    # change directory to location of program
+    program_path = ""
+    if getattr(sys, 'frozen', False):
+        program_path = os.path.dirname(sys.executable)
+    elif __file__:
+        program_path = os.path.dirname(__file__)
+    os.chdir(program_path)
+
     config = {}
     with open("config.txt", "r", encoding="UTF-8") as f:
         for line in f:
@@ -110,9 +118,9 @@ def main() -> int:
 
     log("finished", "info")
     log(f"raw and aggregated CSVs located in: {output_path}\n", "info")
-    
+
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    sys.exit(main())
