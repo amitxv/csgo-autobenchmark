@@ -50,6 +50,9 @@ xcopy /s /i /e "%CURRENT_DIR%\src" "%PUBLISH_DIR%"
 del /f /q "%PUBLISH_DIR%\csgo-autobenchmark.py"
 move "%PROJECT_DIR%\dist\csgo-autobenchmark.exe" "%PUBLISH_DIR%"
 
+if exist "csgo-autobenchmark.zip" (
+    del /f /q "csgo-autobenchmark.zip"
+)
 7z a -tzip "csgo-autobenchmark.zip" "%PUBLISH_DIR%"
 
 rd /s /q "%BUILD_ENV%"
