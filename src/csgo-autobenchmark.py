@@ -25,7 +25,7 @@ def send_command(command: str) -> None:
 
 
 def main() -> int:
-    """Main application logic"""
+    """CLI Entrypoint"""
     SUBPROCESS_NULL = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
 
     # change directory to location of program
