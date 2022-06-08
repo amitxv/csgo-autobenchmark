@@ -8,11 +8,6 @@ import pandas
 keyboard = Controller()
 
 
-def log(msg: str, status: str) -> None:
-    """Logs messages to the console with a timestamp"""
-    print(f"[{time.strftime('%H:%M')}] [{status}]: {msg}")
-
-
 def keyboard_press(key):
     """Keyboard keypress action"""
     time.sleep(0.1)
@@ -57,35 +52,35 @@ def main() -> int:
         cs_map = "de_cache"
         duration = 45
     else:
-        log("invalid map in config", "error")
+        print("invalid map in config")
         return 1
 
     trials = int(config["trials"])
     cache_trials = int(config["cache_trials"])
 
     if trials <= 0 or cache_trials < 0:
-        log("invalid trials or cache_trials in config", "error")
+        print("invalid trials or cache_trials in config")
         return 1
 
     skip_confirmation = int(config["skip_confirmation"])
 
-    log(f"estimated time: {(40 + ((duration + 15) * cache_trials)+ ((duration + 15) * trials))/60:.2f} min", "info")
+    print(f"estimated time: {(40 + ((duration + 15) * cache_trials)+ ((duration + 15) * trials))/60:.2f} min")
 
     if not skip_confirmation:
         input("Press enter to start benchmarking...")
-        log("starting in 7 Seconds (tab back into game)", "info")
+        print("starting in 7 Seconds (tab back into game)")
         time.sleep(7)
 
     send_command("`")
     send_command(f"map {cs_map}")
-    log(f"waiting for {cs_map} to load", "info")
+    print(f"waiting for {cs_map} to load")
     time.sleep(40)
     send_command("`")
     send_command("exec benchmark")
 
     if cache_trials > 0:
         for trial in range(1, cache_trials + 1):
-            log(f"cache Trial: {trial}/{cache_trials}", "info")
+            print(f"cache Trial: {trial}/{cache_trials}")
             send_command("benchmark")
             time.sleep(duration + 15)
 
@@ -93,7 +88,7 @@ def main() -> int:
     os.makedirs(output_path)
 
     for trial in range(1, trials + 1):
-        log(f"recording Trial: {trial}/{trials}", "info")
+        print(f"recording Trial: {trial}/{trials}")
         send_command("benchmark")
 
         try:
@@ -117,8 +112,8 @@ def main() -> int:
         aggregated = pandas.concat(CSVs)
         aggregated.to_csv(f"{output_path}\\Aggregated.csv", index=False)
 
-    log("finished", "info")
-    log(f"raw and aggregated CSVs located in: {output_path}\n", "info")
+    print("finished")
+    print(f"raw and aggregated CSVs located in: {output_path}\n")
 
     return 0
 
