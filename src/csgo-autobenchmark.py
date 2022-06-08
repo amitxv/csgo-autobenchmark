@@ -3,7 +3,6 @@ import os
 import subprocess
 import sys
 from pynput.keyboard import Controller, Key
-import pandas
 
 keyboard = Controller()
 
@@ -22,6 +21,23 @@ def send_command(command: str) -> None:
         keyboard_press(char)
     if command != "`":
         keyboard_press(Key.enter)
+
+
+def aggregate(files: list, output_file: str) -> None:
+    """Aggregates PresentMon CSV files"""
+    aggregated = []
+    for file in files:
+        with open(file, "r", encoding="UTF-8") as csv_f:
+            lines = csv_f.readlines()
+            aggregated.extend(lines)
+
+    with open(output_file, "a", encoding="UTF-8") as csv_f:
+        column_names = aggregated[0]
+        csv_f.write(column_names)
+
+        for line in aggregated:
+            if line != column_names:
+                csv_f.write(line)
 
 
 def main() -> int:
@@ -107,10 +123,9 @@ def main() -> int:
 
     CSVs = []
     for trial in range(1, trials + 1):
-        CSV = f"{output_path}\\Trial-{trial}.csv"
-        CSVs.append(pandas.read_csv(CSV))
-        aggregated = pandas.concat(CSVs)
-        aggregated.to_csv(f"{output_path}\\Aggregated.csv", index=False)
+        CSVs.append(f"{output_path}\\Trial-{trial}.csv")
+
+    aggregate(CSVs, f"{output_path}\\Aggregated.csv")
 
     print("finished")
     print(f"raw and aggregated CSVs located in: {output_path}\n")
