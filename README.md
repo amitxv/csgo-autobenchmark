@@ -4,8 +4,6 @@ CLI tool to automate the benchmark process in csgo using scripts from [csgo-benc
 
 Contact: https://twitter.com/amitxv
 
-🐱 set your windows language and keyboard layout to english to avoid issues with the backtick key
- 
 🐭 enable developer console in the game settings
 
 🐰 remove all launch options for csgo to avoid it interfering with the benchmark
