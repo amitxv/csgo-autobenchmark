@@ -113,7 +113,7 @@ def main() -> int:
                 "-stop_existing_session",
                 "-no_top",
                 "-verbose",
-                "-delay", "5"
+                "-delay", "5",
                 "-timed", str(duration),
                 "-process_name", "csgo.exe",
                 "-output_file", f"{output_path}\\Trial-{trial}.csv",
