@@ -87,11 +87,11 @@ def main() -> int:
         print("starting in 7 Seconds (tab back into game)")
         time.sleep(7)
 
-    send_command("`")
+    keyboard_press(Key.f12)
     send_command(f"map {cs_map}")
     print(f"waiting for {cs_map} to load")
     time.sleep(40)
-    send_command("`")
+    keyboard_press(Key.f12)
     send_command("exec benchmark")
 
     if cache_trials > 0:
@@ -113,7 +113,7 @@ def main() -> int:
                 "-stop_existing_session",
                 "-no_top",
                 "-verbose",
-                "-delay", "5"
+                "-delay", "5",
                 "-timed", str(duration),
                 "-process_name", "csgo.exe",
                 "-output_file", f"{output_path}\\Trial-{trial}.csv",
