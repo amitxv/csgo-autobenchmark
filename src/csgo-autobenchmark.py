@@ -82,7 +82,7 @@ def main() -> int:
     print(f"estimated time: {(40 + ((duration + 15) * cache_trials)+ ((duration + 15) * trials))/60:.2f} min")
 
     if not skip_confirmation:
-        input("Press enter to start benchmarking...")
+        input("press enter to start benchmarking...")
         print("starting in 7 Seconds (tab back into game)")
         time.sleep(7)
 
@@ -95,7 +95,7 @@ def main() -> int:
 
     if cache_trials > 0:
         for trial in range(1, cache_trials + 1):
-            print(f"cache Trial: {trial}/{cache_trials}")
+            print(f"cache trial: {trial}/{cache_trials}")
             send_command("benchmark")
             time.sleep(duration + 15)
 
@@ -103,7 +103,7 @@ def main() -> int:
     os.makedirs(output_path)
 
     for trial in range(1, trials + 1):
-        print(f"recording Trial: {trial}/{trials}")
+        print(f"recording trial: {trial}/{trials}")
         send_command("benchmark")
 
         try:
