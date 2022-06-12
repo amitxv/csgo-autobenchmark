@@ -86,11 +86,11 @@ def main() -> int:
         print("starting in 7 Seconds (tab back into game)")
         time.sleep(7)
 
-    keyboard_press(Key.f12)
+    keyboard_press(Key.f5)
     send_command(f"map {cs_map}")
     print(f"waiting for {cs_map} to load")
     time.sleep(40)
-    keyboard_press(Key.f12)
+    keyboard_press(Key.f5)
     send_command("exec benchmark")
 
     if cache_trials > 0:
