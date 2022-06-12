@@ -41,7 +41,7 @@ def aggregate(files: list, output_file: str) -> None:
 
 def main() -> int:
     """CLI Entrypoint"""
-    SUBPROCESS_NULL = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
+    subprocess_null = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
 
     # change directory to location of program
     program_path = ""
@@ -116,7 +116,7 @@ def main() -> int:
                 "-timed", str(duration),
                 "-process_name", "csgo.exe",
                 "-output_file", f"{output_path}\\Trial-{trial}.csv",
-                ], timeout=duration + 15, **SUBPROCESS_NULL, check=False)
+                ], timeout=duration + 15, **subprocess_null, check=False)
         except subprocess.TimeoutExpired:
             pass
 
