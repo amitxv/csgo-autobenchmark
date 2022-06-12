@@ -6,6 +6,8 @@ Contact: https://twitter.com/amitxv
 
 🐭 enable developer console in the game settings
 
+🐱 bind the console hotkey to F12 by running ``bind F12 "toggleconsole"`` in the console
+
 🐰 remove all launch options for csgo to avoid it interfering with the benchmark
 
 🐶 do not have csgo installed on a HDD

@@ -15,12 +15,11 @@ def keyboard_press(key):
 
 
 def send_command(command: str) -> None:
-    """Sends commands to the foreground window"""
+    """Sends commands to the foreground window and presses enter"""
     time.sleep(0.1)
     for char in command:
         keyboard_press(char)
-    if command != "`":
-        keyboard_press(Key.enter)
+    keyboard_press(Key.enter)
 
 
 def aggregate(files: list, output_file: str) -> None:
