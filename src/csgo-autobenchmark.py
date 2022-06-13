@@ -120,11 +120,12 @@ def main() -> int:
         except subprocess.TimeoutExpired:
             pass
 
-    CSVs = []
-    for trial in range(1, trials + 1):
-        CSVs.append(f"{output_path}\\Trial-{trial}.csv")
+    if trials > 1:
+        CSVs = []
+        for trial in range(1, trials + 1):
+            CSVs.append(f"{output_path}\\Trial-{trial}.csv")
 
-    aggregate(CSVs, f"{output_path}\\Aggregated.csv")
+        aggregate(CSVs, f"{output_path}\\Aggregated.csv")
 
     print("finished")
     print(f"raw and aggregated CSVs located in: {output_path}\n")
