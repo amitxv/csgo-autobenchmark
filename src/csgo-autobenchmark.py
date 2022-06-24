@@ -121,10 +121,14 @@ def main() -> int:
                 "-delay", "5",
                 "-timed", str(duration),
                 "-process_name", "csgo.exe",
-                "-output_file", f"{output_path}\\Trial-{trial}.csv",
+                "-output_file", f"{output_path}\\Trial-{trial}.csv"
                 ], timeout=duration + 15, **subprocess_null, check=False)
         except subprocess.TimeoutExpired:
             pass
+
+        if not os.path.exists(f"{output_path}\\Trial-{trial}.csv"):
+            print("error: csv log unsuccessful, this is due to a missing dependency/ windows component")
+            return 1
 
     if trials > 1:
         CSVs = []
