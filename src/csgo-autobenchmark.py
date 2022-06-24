@@ -73,35 +73,36 @@ def main() -> int:
         cs_map = "de_cache"
         duration = 45
     else:
-        print("invalid map in config")
+        print("error: invalid map in config")
         return 1
 
     trials = int(config["trials"])
     cache_trials = int(config["cache_trials"])
 
     if trials <= 0 or cache_trials < 0:
-        print("invalid trials or cache_trials in config")
+        print("error: invalid trials or cache_trials in config")
         return 1
 
     skip_confirmation = bool(int(config["skip_confirmation"]))
 
-    print(f"estimated time: {(40 + ((duration + 15) * cache_trials)+ ((duration + 15) * trials))/60:.2f} min")
+    estimated_time = (40 + ((duration + 15) * cache_trials)+ ((duration + 15) * trials))/60:.2f
+    print(f"info: estimated time: {estimated_time} min")
 
     if not skip_confirmation:
         input("press enter to start benchmarking...")
-        print("starting in 7 Seconds (tab back into game)")
+        print("info: starting in 7 Seconds (tab back into game)")
         time.sleep(7)
 
     keyboard_press(Key.f5)
     send_command(f"map {cs_map}")
-    print(f"waiting for {cs_map} to load")
+    print(f"info: waiting for {cs_map} to load")
     time.sleep(40)
     keyboard_press(Key.f5)
     send_command("exec benchmark")
 
     if cache_trials > 0:
         for trial in range(1, cache_trials + 1):
-            print(f"cache trial: {trial}/{cache_trials}")
+            print(f"info: cache trial: {trial}/{cache_trials}")
             send_command("benchmark")
             time.sleep(duration + 15)
 
@@ -109,7 +110,7 @@ def main() -> int:
     os.makedirs(output_path)
 
     for trial in range(1, trials + 1):
-        print(f"recording trial: {trial}/{trials}")
+        print(f"info: recording trial: {trial}/{trials}")
         send_command("benchmark")
 
         try:
@@ -132,8 +133,8 @@ def main() -> int:
 
         aggregate(CSVs, f"{output_path}\\Aggregated.csv")
 
-    print("finished")
-    print(f"raw and aggregated CSVs located in: {output_path}\n")
+    print("info: finished")
+    print(f"info: raw and aggregated CSVs located in: {output_path}\n")
 
     return 0
 
