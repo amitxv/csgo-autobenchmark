@@ -83,7 +83,7 @@ def main() -> int:
         print("invalid trials or cache_trials in config")
         return 1
 
-    skip_confirmation = int(config["skip_confirmation"])
+    skip_confirmation = bool(int(config["skip_confirmation"]))
 
     print(f"estimated time: {(40 + ((duration + 15) * cache_trials)+ ((duration + 15) * trials))/60:.2f} min")
 
