@@ -117,7 +117,6 @@ def main() -> int:
                 "bin\\PresentMon\\PresentMon.exe",
                 "-stop_existing_session",
                 "-no_top",
-                "-verbose",
                 "-delay", "5",
                 "-timed", str(duration),
                 "-process_name", "csgo.exe",
