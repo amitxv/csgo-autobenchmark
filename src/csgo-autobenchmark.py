@@ -39,6 +39,19 @@ def aggregate(files: list, output_file: str) -> None:
                 csv_f.write(line)
 
 
+def parse_config(config_path: str) -> dict:
+    """Parse a simple configuration file and return a dict of the settings/values"""
+    config = {}
+    with open(config_path, "r", encoding="UTF-8") as config_file:
+        for line in config_file:
+            if "//" not in line:
+                line = line.strip("\n")
+                setting, _equ, value = line.rpartition("=")
+                if setting != "" and value != "":
+                    config[setting] = value
+    return config
+
+
 def main() -> int:
     """CLI Entrypoint"""
     subprocess_null = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
@@ -51,14 +64,7 @@ def main() -> int:
         program_path = os.path.dirname(__file__)
     os.chdir(program_path)
 
-    config = {}
-    with open("config.txt", "r", encoding="UTF-8") as f:
-        for line in f:
-            if "//" not in line:
-                line = line.strip("\n")
-                setting, _equ, value = line.rpartition("=")
-                if setting != "" and value != "":
-                    config[setting] = value
+    config = parse_config("config.txt")
 
     if int(config["map"]) == 1:
         cs_map = "de_dust2"
