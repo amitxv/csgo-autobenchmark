@@ -85,8 +85,8 @@ def main() -> int:
 
     skip_confirmation = bool(int(config["skip_confirmation"]))
 
-    estimated_time = (40 + ((duration + 15) * cache_trials)+ ((duration + 15) * trials))/60:.2f
-    print(f"info: estimated time: {estimated_time} min")
+    estimated_time = (40 + ((duration + 15) * cache_trials)+ ((duration + 15) * trials))/60
+    print(f"info: estimated time: {estimated_time:.2f} min")
 
     if not skip_confirmation:
         input("press enter to start benchmarking...")
