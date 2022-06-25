@@ -58,7 +58,7 @@ def main() -> int:
 
     # change directory to location of program
     program_path = ""
-    if getattr(sys, 'frozen', False):
+    if getattr(sys, "frozen", False):
         program_path = os.path.dirname(sys.executable)
     elif __file__:
         program_path = os.path.dirname(__file__)
@@ -85,7 +85,7 @@ def main() -> int:
 
     skip_confirmation = bool(int(config["skip_confirmation"]))
 
-    estimated_time = (40 + ((duration + 15) * cache_trials)+ ((duration + 15) * trials))/60
+    estimated_time = (40 + ((duration + 15) * cache_trials) + ((duration + 15) * trials)) / 60
     print(f"info: estimated time: {estimated_time:.2f} min")
 
     if not skip_confirmation:
