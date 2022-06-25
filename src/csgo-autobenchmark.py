@@ -131,11 +131,11 @@ def main() -> int:
             return 1
 
     if trials > 1:
-        CSVs = []
+        raw_csvs = []
         for trial in range(1, trials + 1):
-            CSVs.append(f"{output_path}\\Trial-{trial}.csv")
+            raw_csvs.append(f"{output_path}\\Trial-{trial}.csv")
 
-        aggregate(CSVs, f"{output_path}\\Aggregated.csv")
+        aggregate(raw_csvs, f"{output_path}\\Aggregated.csv")
 
     print("info: finished")
     print(f"info: raw and aggregated CSVs located in: {output_path}\n")
