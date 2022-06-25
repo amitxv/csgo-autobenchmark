@@ -90,8 +90,8 @@ def main() -> int:
 
     if not skip_confirmation:
         input("press enter to start benchmarking...")
-        print("info: starting in 7 Seconds (tab back into game)")
-        time.sleep(7)
+    print("info: starting in 7 Seconds (tab back into game)")
+    time.sleep(7)
 
     keyboard_press(Key.f5)
     send_command(f"map {cs_map}")
