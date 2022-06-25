@@ -1,3 +1,4 @@
+from __future__ import annotations
 import time
 import os
 import subprocess
@@ -6,8 +7,7 @@ from pynput.keyboard import Controller, Key
 
 keyboard = Controller()
 
-
-def keyboard_press(key):
+def keyboard_press(key: str | Key) -> None:
     """Keyboard keypress action"""
     time.sleep(0.1)
     keyboard.press(key)
