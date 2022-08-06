@@ -3,19 +3,22 @@ import time
 import os
 import subprocess
 import sys
+import ctypes
 from pynput.keyboard import Controller, Key
 
 keyboard = Controller()
+ntdll = ctypes.WinDLL("ntdll.dll")
+
 
 def keyboard_press(key: str | Key) -> None:
-    """Keyboard keypress action"""
+    """keyboard keypress action"""
     time.sleep(0.1)
     keyboard.press(key)
     keyboard.release(key)
 
 
 def send_command(command: str) -> None:
-    """Sends commands to the foreground window and presses enter"""
+    """sends commands to the foreground window and presses enter"""
     time.sleep(0.1)
     for char in command:
         keyboard_press(char)
@@ -23,7 +26,7 @@ def send_command(command: str) -> None:
 
 
 def aggregate(files: list, output_file: str) -> None:
-    """Aggregates PresentMon CSV files"""
+    """aggregates presentmon csv files"""
     aggregated = []
     for file in files:
         with open(file, "r", encoding="UTF-8") as csv_f:
@@ -40,7 +43,7 @@ def aggregate(files: list, output_file: str) -> None:
 
 
 def parse_config(config_path: str) -> dict:
-    """Parse a simple configuration file and return a dict of the settings/values"""
+    """parse a simple configuration file and return a dict of the settings/values"""
     config = {}
     with open(config_path, "r", encoding="UTF-8") as config_file:
         for line in config_file:
@@ -52,8 +55,24 @@ def parse_config(config_path: str) -> dict:
     return config
 
 
+def timer_resolution(enabled: bool) -> int:
+    """
+    sets the kernel timer-resolution to 1000hz
+    this function does not affect other processes on Windows 10 2004+
+    """
+    min_res = ctypes.c_ulong()
+    max_res = ctypes.c_ulong()
+    curr_res = ctypes.c_ulong()
+
+    ntdll.NtQueryTimerResolution(ctypes.byref(min_res), ctypes.byref(max_res), ctypes.byref(curr_res))
+
+    if max_res.value <= 10000 and ntdll.NtSetTimerResolution(10000, int(enabled), ctypes.byref(curr_res)) == 0:
+        return 0
+    return 1
+
+
 def main() -> int:
-    """CLI Entrypoint"""
+    """cli entrypoint"""
     subprocess_null = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
 
     # change directory to location of program
@@ -92,6 +111,9 @@ def main() -> int:
         input("press enter to start benchmarking...")
     print("info: starting in 7 Seconds (tab back into game)")
     time.sleep(7)
+
+    if timer_resolution(True) != 0:
+        print("info: unable to set timer-resolution")
 
     keyboard_press(Key.f5)
     send_command(f"map {cs_map}")
@@ -137,6 +159,7 @@ def main() -> int:
 
         aggregate(raw_csvs, f"{output_path}\\Aggregated.csv")
 
+    timer_resolution(False)
     print("info: finished")
     print(f"info: raw and aggregated CSVs located in: {output_path}\n")
 
