@@ -71,8 +71,18 @@ def timer_resolution(enabled: bool) -> int:
     return 1
 
 
+def is_admin() -> bool:
+    """check if script is ran with admin privileges"""
+    return ctypes.windll.shell32.IsUserAnAdmin() != 0
+
+
 def main() -> int:
     """cli entrypoint"""
+
+    if not is_admin():
+        print("error: administrator privileges required")
+        return 1
+
     subprocess_null = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
 
     # change directory to location of program

@@ -13,4 +13,4 @@ if exist "csgo-autobenchmark.py" (
 )
 
 pause
-exit /b
+exit /b 0

@@ -18,7 +18,7 @@ for %%a in (
         echo error: %%a not found in path
     )
 )
-if not !path_err! == 0 exit /b
+if not !path_err! == 0 exit /b 1
 
 set "CURRENT_DIR=%~dp0"
 set "CURRENT_DIR=!CURRENT_DIR:~0,-1!"
@@ -41,7 +41,7 @@ pip install -r requirements.txt
 copy /y "!CURRENT_DIR!\src\csgo-autobenchmark.py" "!PROJECT_DIR!"
 cd "!PROJECT_DIR!"
 
-pyinstaller "csgo-autobenchmark.py" --onefile --uac-admin
+pyinstaller "csgo-autobenchmark.py" --onefile
 
 call "!BUILD_ENV!\Scripts\deactivate.bat"
 
@@ -58,4 +58,4 @@ if exist "csgo-autobenchmark.zip" (
 
 rd /s /q "!BUILD_ENV!"
 
-exit /b
+exit /b 0
