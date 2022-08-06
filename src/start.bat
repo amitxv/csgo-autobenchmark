@@ -1,14 +1,18 @@
 @echo off
+setlocal EnableDelayedExpansion
 
 :: this script is used to start the main program so
 :: that the user does not need to run it through the CLI
 
 pushd "%~dp0"
-if exist "csgo-autobenchmark.py" (
-    "csgo-autobenchmark.py"
+set "program_name=csgo-autobenchmark"
+if exist "!program_name!.py" (
+    "!program_name!.py"
 ) else (
-    if exist "csgo-autobenchmark.exe" (
-        "csgo-autobenchmark.exe"
+    if exist "!program_name!.exe" (
+        "!program_name!.exe"
+    ) else (
+        echo error: !program_name! not found
     )
 )
 
