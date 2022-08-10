@@ -95,6 +95,10 @@ def main() -> int:
 
     config = parse_config("config.txt")
 
+    if not os.path.exists("bin\\PresentMon\\PresentMon.exe"):
+        print("error: presentmon not found")
+        return 1
+
     if int(config["map"]) == 1:
         cs_map = "de_dust2"
         duration = 40
