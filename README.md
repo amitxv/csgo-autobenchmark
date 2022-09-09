@@ -16,7 +16,7 @@ Contact: https://twitter.com/amitxv
 
 - Remove all launch options for csgo to avoid it interfering with the benchmark
 
-- Do not have csgo installed on a HDD
+- Do not have CS:GO installed on a HDD
 
 - Download and extract the latest release from the [releases tab](https://github.com/amitxv/csgo-autobenchmark/releases)
 
@@ -26,8 +26,8 @@ Contact: https://twitter.com/amitxv
 
     - Move **video.txt** to **Steam\Userdata\\???\730\local\cfg**
 
-- Launch csgo to the lobby with the console closed
+- Launch CS:GO to the lobby with the console closed
 
-- Run **start.bat** and press enter when ready. There is a 7 second timeout to allow you to tab back into the game to give csgo foreground priority
+- Run **start.bat** and press enter when ready. There is a 7 second timeout to allow you to tab back into the game, to give csgo foreground priority
 
-- Do not touch your PC at all after after this stage until the estimated time is up
+- Do not touch your PC at all, after this stage until the estimated time is up
