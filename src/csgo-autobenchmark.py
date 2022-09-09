@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 import ctypes
+import platform
 from pynput.keyboard import Controller, Key
 
 keyboard = Controller()
@@ -95,7 +96,12 @@ def main() -> int:
 
     config = parse_config("config.txt")
 
-    if not os.path.exists("bin\\PresentMon\\PresentMon.exe"):
+    if platform.release() != "" and int(platform.release()) >= 10:
+        present_mon = "PresentMon-1.8.0-x64.exe"
+    else:
+        present_mon = "PresentMon-1.6.0-x64.exe"
+
+    if not os.path.exists(f"bin\\PresentMon\\{present_mon}"):
         print("error: presentmon not found")
         return 1
 
@@ -151,7 +157,7 @@ def main() -> int:
 
         try:
             subprocess.run([
-                "bin\\PresentMon\\PresentMon.exe",
+                f"bin\\PresentMon\\{present_mon}",
                 "-stop_existing_session",
                 "-no_top",
                 "-delay", "5",
