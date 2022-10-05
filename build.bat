@@ -36,12 +36,12 @@ mkdir "!PROJECT_DIR!"
 python -m venv "!BUILD_ENV!"
 call "!BUILD_ENV!\Scripts\activate.bat"
 
-pip install -r requirements.txt
+pip install -r ".\requirements.txt"
 
 copy /y "!CURRENT_DIR!\src\csgo-autobenchmark.py" "!PROJECT_DIR!"
 cd "!PROJECT_DIR!"
 
-pyinstaller "csgo-autobenchmark.py" --onefile
+pyinstaller ".\csgo-autobenchmark.py" --onefile
 
 call "!BUILD_ENV!\Scripts\deactivate.bat"
 
@@ -51,10 +51,10 @@ xcopy /s /i /e "!CURRENT_DIR!\src" "!PUBLISH_DIR!"
 del /f /q "!PUBLISH_DIR!\csgo-autobenchmark.py"
 move "!PROJECT_DIR!\dist\csgo-autobenchmark.exe" "!PUBLISH_DIR!"
 
-if exist "csgo-autobenchmark.zip" (
-    del /f /q "csgo-autobenchmark.zip"
+if exist ".\csgo-autobenchmark.zip" (
+    del /f /q ".\csgo-autobenchmark.zip"
 )
-7z a -tzip "csgo-autobenchmark.zip" "!PUBLISH_DIR!"
+7z a -tzip ".\csgo-autobenchmark.zip" "!PUBLISH_DIR!"
 
 rd /s /q "!BUILD_ENV!"
 
