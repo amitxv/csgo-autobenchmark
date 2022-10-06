@@ -1,11 +1,14 @@
+"""csgo-autobenchmark"""
+
+
 from __future__ import annotations
 import time
 import os
 import subprocess
 import sys
 import ctypes
-import platform
 from pynput.keyboard import Controller, Key
+
 
 keyboard = Controller()
 ntdll = ctypes.WinDLL("ntdll.dll")
@@ -46,12 +49,14 @@ def aggregate(files: list, output_file: str) -> None:
 def parse_config(config_path: str) -> dict:
     """parse a simple configuration file and return a dict of the settings/values"""
     config = {}
-    with open(config_path, "r", encoding="UTF-8") as config_file:
-        for line in config_file:
+    with open(config_path, "r", encoding="UTF-8") as cfg_file:
+        for line in cfg_file:
             if "//" not in line:
                 line = line.strip("\n")
                 setting, _equ, value = line.rpartition("=")
                 if setting != "" and value != "":
+                    if value.isdigit():
+                        value = int(value)
                     config[setting] = value
     return config
 
@@ -72,68 +77,58 @@ def timer_resolution(enabled: bool) -> int:
     return 1
 
 
-def is_admin() -> bool:
-    """check if script is ran with admin privileges"""
-    return ctypes.windll.shell32.IsUserAnAdmin() != 0
-
-
 def main() -> int:
     """cli entrypoint"""
 
-    if not is_admin():
-        print("error: administrator privileges required")
-        return 1
-
+    version = "0.3.2"
     subprocess_null = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
+    cfg = parse_config("config.txt")
+    present_mon = "PresentMon-1.6.0-x64.exe"
 
-    # change directory to location of program
-    program_path = ""
+    print(f"win-wallpaper v{version}")
+    print("GitHub - https://github.com/amitxv\n")
+
+    if not ctypes.windll.shell32.IsUserAnAdmin():
+        print("error: administrator privileges required")
+
     if getattr(sys, "frozen", False):
-        program_path = os.path.dirname(sys.executable)
+        os.chdir(os.path.dirname(sys.executable))
     elif __file__:
-        program_path = os.path.dirname(__file__)
-    os.chdir(program_path)
+        os.chdir(os.path.dirname(__file__))
 
-    config = parse_config("config.txt")
-
-    if platform.release() != "" and int(platform.release()) >= 10:
+    if sys.getwindowsversion().major >= 10:
         present_mon = "PresentMon-1.8.0-x64.exe"
-    else:
-        present_mon = "PresentMon-1.6.0-x64.exe"
 
     if not os.path.exists(f"bin\\PresentMon\\{present_mon}"):
         print("error: presentmon not found")
         return 1
 
-    if int(config["map"]) == 1:
+    if cfg["map"] == 1:
         cs_map = "de_dust2"
         duration = 40
-    elif int(config["map"]) == 2:
+    elif cfg["map"] == 2:
         cs_map = "de_cache"
         duration = 45
     else:
         print("error: invalid map in config")
         return 1
 
-    trials = int(config["trials"])
-    cache_trials = int(config["cache_trials"])
-
-    if trials <= 0 or cache_trials < 0:
+    if cfg["trials"] <= 0 or cfg["cache_trials"] < 0:
         print("error: invalid trials or cache_trials in config")
         return 1
 
-    skip_confirmation = bool(int(config["skip_confirmation"]))
+    estimated_time = (40 + ((duration + 15) * cfg["cache_trials"]) + ((duration + 15) * cfg["trials"])) / 60
+    print(f"info: estimated time: {round(estimated_time)} minutes approx")
 
-    estimated_time = (40 + ((duration + 15) * cache_trials) + ((duration + 15) * trials)) / 60
-    print(f"info: estimated time: {estimated_time:.2f} min")
-
-    if not skip_confirmation:
+    if not cfg["skip_confirmation"]:
         input("press enter to start benchmarking...")
     print("info: starting in 7 Seconds (tab back into game)")
     time.sleep(7)
 
-    if timer_resolution(True) != 0:
-        print("info: unable to set timer-resolution")
+    output_path = f"captures\\csgo-autobenchmark-{time.strftime('%d%m%y%H%M%S')}"
+    os.makedirs(output_path)
+
+    timer_resolution(True)
 
     keyboard_press(Key.f5)
     send_command(f"map {cs_map}")
@@ -142,17 +137,14 @@ def main() -> int:
     keyboard_press(Key.f5)
     send_command("exec benchmark")
 
-    if cache_trials > 0:
-        for trial in range(1, cache_trials + 1):
-            print(f"info: cache trial: {trial}/{cache_trials}")
+    if cfg["cache_trials"] > 0:
+        for trial in range(1, cfg["cache_trials"] + 1):
+            print(f"info: cache trial: {trial}/{cfg['cache_trials']}")
             send_command("benchmark")
             time.sleep(duration + 15)
 
-    output_path = f"captures\\csgo-autobenchmark-{time.strftime('%d%m%y%H%M%S')}"
-    os.makedirs(output_path)
-
-    for trial in range(1, trials + 1):
-        print(f"info: recording trial: {trial}/{trials}")
+    for trial in range(1, cfg["trials"] + 1):
+        print(f"info: recording trial: {trial}/{cfg['trials']}")
         send_command("benchmark")
 
         try:
@@ -172,14 +164,13 @@ def main() -> int:
             print("error: csv log unsuccessful, this is due to a missing dependency/ windows component")
             return 1
 
-    if trials > 1:
+    if cfg["trials"] > 1:
         raw_csvs = []
-        for trial in range(1, trials + 1):
+        for trial in range(1, cfg["trials"] + 1):
             raw_csvs.append(f"{output_path}\\Trial-{trial}.csv")
 
         aggregate(raw_csvs, f"{output_path}\\Aggregated.csv")
 
-    timer_resolution(False)
     print("info: finished")
     print(f"info: raw and aggregated CSVs located in: {output_path}\n")
 
