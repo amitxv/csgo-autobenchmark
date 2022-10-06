@@ -85,7 +85,7 @@ def main() -> int:
     cfg = parse_config("config.txt")
     present_mon = "PresentMon-1.6.0-x64.exe"
 
-    print(f"win-wallpaper v{version}")
+    print(f"csgo-autobenchmark v{version}")
     print("GitHub - https://github.com/amitxv\n")
 
     if not ctypes.windll.shell32.IsUserAnAdmin():
