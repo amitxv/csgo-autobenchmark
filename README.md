@@ -1,6 +1,6 @@
 ## csgo-autobenchmark
 
-Automate the benchmark process in csgo using scripts from [csgo-benchmark](https://github.com/samisalreadytaken/csgo-benchmark)
+Automatic csgo benchmarking to mitigate systematic error using scripts from [csgo-benchmark](https://github.com/samisalreadytaken/csgo-benchmark).
 
 Contact: https://twitter.com/amitxv
 
@@ -23,7 +23,6 @@ Contact: https://twitter.com/amitxv
 - From the **prerequisites** folder
 
     - Move the **csgo** folder to ``.\steamapps\common\Counter-Strike Global Offensive``
-
     - Move **video.txt** to ``.\Steam\Userdata\\*\730\local\cfg``
 
 - Launch csgo to the lobby with the console closed
