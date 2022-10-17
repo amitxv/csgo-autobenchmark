@@ -78,7 +78,7 @@ def timer_resolution(enabled: bool) -> int:
 
 
 def main() -> int:
-    """cli entrypoint"""
+    """program entrypoint"""
 
     version = "0.3.3"
     subprocess_null = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
