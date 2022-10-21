@@ -162,7 +162,7 @@ def main() -> int:
             pass
 
         if not os.path.exists(f"{output_path}\\Trial-{trial}.csv"):
-            print("error: csv log unsuccessful, this is due to a missing dependency/ windows component")
+            print("error: csv log unsuccessful, this may be due to a missing dependency or windows component")
             return 1
 
     if cfg["trials"] > 1:
