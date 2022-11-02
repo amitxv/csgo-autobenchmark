@@ -1,7 +1,3 @@
-"""csgo-autobenchmark"""
-
-
-from __future__ import annotations
 import time
 import os
 import subprocess
@@ -9,27 +5,23 @@ import sys
 import ctypes
 from pynput.keyboard import Controller, Key
 
-
 keyboard = Controller()
 ntdll = ctypes.WinDLL("ntdll.dll")
 
-
-def keyboard_press(key: str | Key) -> None:
+def keyboard_press(key) -> None:
     """keyboard keypress action"""
     time.sleep(0.1)
     keyboard.press(key)
     keyboard.release(key)
 
-
-def send_command(command: str) -> None:
+def send_command(command) -> None:
     """sends commands to the foreground window and presses enter"""
     time.sleep(0.1)
     for char in command:
         keyboard_press(char)
     keyboard_press(Key.enter)
 
-
-def aggregate(files: list, output_file: str) -> None:
+def aggregate(files, output_file) -> None:
     """aggregates presentmon csv files"""
     aggregated = []
     for file in files:
@@ -45,8 +37,7 @@ def aggregate(files: list, output_file: str) -> None:
             if line != column_names:
                 csv_f.write(line)
 
-
-def parse_config(config_path: str) -> dict:
+def parse_config(config_path) -> dict:
     """parse a simple configuration file and return a dict of the settings/values"""
     config = {}
     with open(config_path, "r", encoding="UTF-8") as cfg_file:
@@ -60,8 +51,7 @@ def parse_config(config_path: str) -> dict:
                     config[setting] = value
     return config
 
-
-def timer_resolution(enabled: bool) -> int:
+def timer_resolution(enabled) -> int:
     """
     sets the kernel timer-resolution to 1000hz
     this function does not affect other processes on Windows 10 2004+
@@ -75,7 +65,6 @@ def timer_resolution(enabled: bool) -> int:
     if max_res.value <= 10000 and ntdll.NtSetTimerResolution(10000, int(enabled), ctypes.byref(curr_res)) == 0:
         return 0
     return 1
-
 
 def main() -> int:
     """program entrypoint"""
@@ -176,7 +165,6 @@ def main() -> int:
     print(f"info: raw and aggregated CSVs located in: {output_path}\n")
 
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())
