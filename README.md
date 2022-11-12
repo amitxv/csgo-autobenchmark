@@ -21,7 +21,7 @@ Contact: https://twitter.com/amitxv
 - From the **prerequisites** folder
 
     - Move the **csgo** folder to ``.\steamapps\common\Counter-Strike Global Offensive``
-    - Move **video.txt** to ``.\Steam\Userdata\\*\730\local\cfg``
+    - Move **video.txt** to ``.\Steam\Userdata\*\730\local\cfg``
 
 - Launch csgo to the lobby with the console closed
 
