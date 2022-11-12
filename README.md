@@ -14,9 +14,7 @@ Contact: https://twitter.com/amitxv
     bind F5 "toggleconsole"
     ```
 
-- Remove all launch options for csgo to avoid it interfering with the benchmark
-
-- Do not have csgo installed on a HDD
+- Do not have csgo installed on a HDD due to long loading times
 
 - Download and extract the latest release from the [releases tab](https://github.com/amitxv/csgo-autobenchmark/releases)
 
