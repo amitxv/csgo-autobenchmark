@@ -1,8 +1,8 @@
-## csgo-autobenchmark
+# csgo-autobenchmark
 
 Automatic csgo benchmarking to mitigate systematic error using scripts from [csgo-benchmark](https://github.com/samisalreadytaken/csgo-benchmark).
 
-Contact: https://twitter.com/amitxv
+Contact: <https://twitter.com/amitxv>
 
 ## Usage
 
@@ -10,7 +10,7 @@ Contact: https://twitter.com/amitxv
 
 - Bind the console hotkey to F5 by running the command below in the console
 
-    ```
+    ```txt
     bind F5 "toggleconsole"
     ```
 
