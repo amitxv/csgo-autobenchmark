@@ -1,6 +1,6 @@
 # csgo-autobenchmark
 
-Automatic csgo benchmarking to mitigate systematic error using scripts from [csgo-benchmark](https://github.com/samisalreadytaken/csgo-benchmark).
+Automatic csgo benchmarking to mitigate systematic error using scripts from [csgo-benchmark](https://github.com/samisalreadytaken/csgo-benchmark)
 
 Contact: <https://twitter.com/amitxv>
 
