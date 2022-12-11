@@ -2,8 +2,6 @@
 
 Automatic csgo benchmarking to mitigate systematic error using scripts from [csgo-benchmark](https://github.com/samisalreadytaken/csgo-benchmark)
 
-Contact: <https://twitter.com/amitxv>
-
 ## Usage
 
 - Enable developer console in the game settings
