@@ -8,11 +8,13 @@ from pynput.keyboard import Controller, Key
 keyboard = Controller()
 ntdll = ctypes.WinDLL("ntdll.dll")
 
+
 def keyboard_press(key) -> None:
     """keyboard keypress action"""
     time.sleep(0.1)
     keyboard.press(key)
     keyboard.release(key)
+
 
 def send_command(command) -> None:
     """sends commands to the foreground window and presses enter"""
@@ -20,6 +22,7 @@ def send_command(command) -> None:
     for char in command:
         keyboard_press(char)
     keyboard_press(Key.enter)
+
 
 def aggregate(files, output_file) -> None:
     """aggregates presentmon csv files"""
@@ -37,6 +40,7 @@ def aggregate(files, output_file) -> None:
             if line != column_names:
                 f.write(line)
 
+
 def parse_config(config_path) -> dict:
     """parse a simple configuration file and return a dict of the settings/values"""
     config = {}
@@ -51,6 +55,7 @@ def parse_config(config_path) -> dict:
                     config[setting] = value
     return config
 
+
 def timer_resolution(enabled) -> int:
     """
     sets the kernel timer-resolution to 1000hz
@@ -60,11 +65,17 @@ def timer_resolution(enabled) -> int:
     max_res = ctypes.c_ulong()
     curr_res = ctypes.c_ulong()
 
-    ntdll.NtQueryTimerResolution(ctypes.byref(min_res), ctypes.byref(max_res), ctypes.byref(curr_res))
+    ntdll.NtQueryTimerResolution(
+        ctypes.byref(min_res), ctypes.byref(max_res), ctypes.byref(curr_res)
+    )
 
-    if max_res.value <= 10000 and ntdll.NtSetTimerResolution(10000, int(enabled), ctypes.byref(curr_res)) == 0:
+    if (
+        max_res.value <= 10000
+        and ntdll.NtSetTimerResolution(10000, int(enabled), ctypes.byref(curr_res)) == 0
+    ):
         return 0
     return 1
+
 
 def main() -> int:
     """program entrypoint"""
@@ -107,7 +118,9 @@ def main() -> int:
         print("error: invalid trials or cache_trials in config")
         return 1
 
-    estimated_time = (40 + ((duration + 15) * cfg["cache_trials"]) + ((duration + 15) * cfg["trials"])) / 60
+    estimated_time = (
+        40 + ((duration + 15) * cfg["cache_trials"]) + ((duration + 15) * cfg["trials"])
+    ) / 60
     print(f"info: estimated time: {round(estimated_time)} minutes approx")
 
     if not cfg["skip_confirmation"]:
@@ -138,20 +151,31 @@ def main() -> int:
         send_command("benchmark")
 
         try:
-            subprocess.run([
-                f"bin\\PresentMon\\{present_mon}",
-                "-stop_existing_session",
-                "-no_top",
-                "-delay", "5",
-                "-timed", str(duration),
-                "-process_name", "csgo.exe",
-                "-output_file", f"{output_path}\\Trial-{trial}.csv"
-                ], timeout=duration + 15, **subprocess_null, check=False)
+            subprocess.run(
+                [
+                    f"bin\\PresentMon\\{present_mon}",
+                    "-stop_existing_session",
+                    "-no_top",
+                    "-delay",
+                    "5",
+                    "-timed",
+                    str(duration),
+                    "-process_name",
+                    "csgo.exe",
+                    "-output_file",
+                    f"{output_path}\\Trial-{trial}.csv",
+                ],
+                timeout=duration + 15,
+                **subprocess_null,
+                check=False,
+            )
         except subprocess.TimeoutExpired:
             pass
 
         if not os.path.exists(f"{output_path}\\Trial-{trial}.csv"):
-            print("error: csv log unsuccessful, this may be due to a missing dependency or windows component")
+            print(
+                "error: csv log unsuccessful, this may be due to a missing dependency or windows component"
+            )
             return 1
 
     if cfg["trials"] > 1:
@@ -165,6 +189,7 @@ def main() -> int:
     print(f"info: raw and aggregated CSVs located in: {output_path}\n")
 
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())
