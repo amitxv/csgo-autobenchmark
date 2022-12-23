@@ -28,24 +28,24 @@ def aggregate(files, output_file) -> None:
     """aggregates presentmon csv files"""
     aggregated = []
     for file in files:
-        with open(file, "r", encoding="utf-8") as f:
-            lines = f.readlines()
+        with open(file, "r", encoding="utf-8") as file:
+            lines = file.readlines()
             aggregated.extend(lines)
 
-    with open(output_file, "a", encoding="utf-8") as f:
+    with open(output_file, "a", encoding="utf-8") as file:
         column_names = aggregated[0]
-        f.write(column_names)
+        file.write(column_names)
 
         for line in aggregated:
             if line != column_names:
-                f.write(line)
+                file.write(line)
 
 
 def parse_config(config_path) -> dict:
     """parse a simple configuration file and return a dict of the settings/values"""
     config = {}
-    with open(config_path, "r", encoding="utf-8") as f:
-        for line in f:
+    with open(config_path, "r", encoding="utf-8") as file:
+        for line in file:
             if "//" not in line:
                 line = line.strip("\n")
                 setting, _equ, value = line.rpartition("=")
