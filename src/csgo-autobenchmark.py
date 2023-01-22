@@ -9,23 +9,20 @@ keyboard = Controller()
 ntdll = ctypes.WinDLL("ntdll.dll")
 
 
-def keyboard_press(key) -> None:
-    """keyboard keypress action"""
+def keyboard_press(key):
     time.sleep(0.1)
     keyboard.press(key)
     keyboard.release(key)
 
 
-def send_command(command) -> None:
-    """sends commands to the foreground window and presses enter"""
+def send_command(command):
     time.sleep(0.1)
     for char in command:
         keyboard_press(char)
     keyboard_press(Key.enter)
 
 
-def aggregate(files, output_file) -> None:
-    """aggregates presentmon csv files"""
+def aggregate(files, output_file):
     aggregated = []
     for file in files:
         with open(file, "r", encoding="utf-8") as file:
@@ -41,8 +38,7 @@ def aggregate(files, output_file) -> None:
                 file.write(line)
 
 
-def parse_config(config_path) -> dict:
-    """parse a simple configuration file and return a dict of the settings/values"""
+def parse_config(config_path):
     config = {}
     with open(config_path, "r", encoding="utf-8") as file:
         for line in file:
@@ -56,32 +52,21 @@ def parse_config(config_path) -> dict:
     return config
 
 
-def timer_resolution(enabled) -> int:
-    """
-    sets the kernel timer-resolution to 1000hz
-    this function does not affect other processes on Windows 10 2004+
-    """
+def timer_resolution(enabled):
     min_res = ctypes.c_ulong()
     max_res = ctypes.c_ulong()
     curr_res = ctypes.c_ulong()
 
-    ntdll.NtQueryTimerResolution(
-        ctypes.byref(min_res), ctypes.byref(max_res), ctypes.byref(curr_res)
-    )
+    ntdll.NtQueryTimerResolution(ctypes.byref(min_res), ctypes.byref(max_res), ctypes.byref(curr_res))
 
-    if (
-        max_res.value <= 10000
-        and ntdll.NtSetTimerResolution(10000, int(enabled), ctypes.byref(curr_res)) == 0
-    ):
+    if max_res.value <= 10000 and ntdll.NtSetTimerResolution(10000, int(enabled), ctypes.byref(curr_res)) == 0:
         return 0
     return 1
 
 
-def main() -> int:
-    """program entrypoint"""
-
+def main():
     version = "0.3.3"
-    subprocess_null = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
+    stdnull = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
     cfg = parse_config("config.txt")
     present_mon = "PresentMon-1.6.0-x64.exe"
 
@@ -90,7 +75,7 @@ def main() -> int:
 
     if not ctypes.windll.shell32.IsUserAnAdmin():
         print("error: administrator privileges required")
-        return 1
+        return
 
     if getattr(sys, "frozen", False):
         os.chdir(os.path.dirname(sys.executable))
@@ -102,7 +87,7 @@ def main() -> int:
 
     if not os.path.exists(f"bin\\PresentMon\\{present_mon}"):
         print("error: presentmon not found")
-        return 1
+        return
 
     if cfg["map"] == 1:
         cs_map = "de_dust2"
@@ -112,15 +97,13 @@ def main() -> int:
         duration = 45
     else:
         print("error: invalid map in config")
-        return 1
+        return
 
     if cfg["trials"] <= 0 or cfg["cache_trials"] < 0:
         print("error: invalid trials or cache_trials in config")
-        return 1
+        return
 
-    estimated_time = (
-        40 + ((duration + 15) * cfg["cache_trials"]) + ((duration + 15) * cfg["trials"])
-    ) / 60
+    estimated_time = (40 + ((duration + 15) * cfg["cache_trials"]) + ((duration + 15) * cfg["trials"])) / 60
     print(f"info: estimated time: {round(estimated_time)} minutes approx")
 
     if not cfg["skip_confirmation"]:
@@ -166,17 +149,15 @@ def main() -> int:
                     f"{output_path}\\Trial-{trial}.csv",
                 ],
                 timeout=duration + 15,
-                **subprocess_null,
+                **stdnull,
                 check=False,
             )
         except subprocess.TimeoutExpired:
             pass
 
         if not os.path.exists(f"{output_path}\\Trial-{trial}.csv"):
-            print(
-                "error: csv log unsuccessful, this may be due to a missing dependency or windows component"
-            )
-            return 1
+            print("error: csv log unsuccessful, this may be due to a missing dependency or windows component")
+            return
 
     if cfg["trials"] > 1:
         raw_csvs = []
@@ -188,8 +169,6 @@ def main() -> int:
     print("info: finished")
     print(f"info: raw and aggregated CSVs located in: {output_path}\n")
 
-    return 0
-
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
