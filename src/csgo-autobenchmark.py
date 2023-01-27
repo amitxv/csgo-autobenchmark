@@ -42,13 +42,15 @@ def parse_config(config_path):
     config = {}
     with open(config_path, "r", encoding="utf-8") as file:
         for line in file:
-            if "//" not in line:
-                line = line.strip("\n")
-                setting, _equ, value = line.rpartition("=")
-                if setting != "" and value != "":
-                    if value.isdigit():
-                        value = int(value)
-                    config[setting] = value
+            if line.startswith("//"):
+                continue
+
+            line = line.strip("\n")
+            setting, _, value = line.rpartition("=")
+
+            if setting and value:
+                config[setting] = value
+
     return config
 
 
@@ -69,6 +71,7 @@ def main():
     stdnull = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
     cfg = parse_config("config.txt")
     present_mon = "PresentMon-1.6.0-x64.exe"
+    map_options = {1: ("de_dust2", 40), 2: ("de_cache", 45)}
 
     print(f"csgo-autobenchmark v{version}")
     print("GitHub - https://github.com/amitxv\n")
@@ -89,24 +92,20 @@ def main():
         print("error: presentmon not found")
         return
 
-    if cfg["map"] == 1:
-        cs_map = "de_dust2"
-        duration = 40
-    elif cfg["map"] == 2:
-        cs_map = "de_cache"
-        duration = 45
-    else:
+    try:
+        cs_map, duration = map_options[int(cfg["map"])]
+    except KeyError:
         print("error: invalid map in config")
         return
 
-    if cfg["trials"] <= 0 or cfg["cache_trials"] < 0:
+    if int(cfg["trials"]) <= 0 or int(cfg["cache_trials"]) < 0:
         print("error: invalid trials or cache_trials in config")
         return
 
-    estimated_time = (40 + ((duration + 15) * cfg["cache_trials"]) + ((duration + 15) * cfg["trials"])) / 60
+    estimated_time = (40 + ((duration + 15) * int(cfg["cache_trials"])) + ((duration + 15) * int(cfg["trials"]))) / 60
     print(f"info: estimated time: {round(estimated_time)} minutes approx")
 
-    if not cfg["skip_confirmation"]:
+    if not int(cfg["skip_confirmation"]):
         input("press enter to start benchmarking...")
     print("info: starting in 7 Seconds (tab back into game)")
     time.sleep(7)
@@ -123,14 +122,14 @@ def main():
     keyboard_press(Key.f5)
     send_command("exec benchmark")
 
-    if cfg["cache_trials"] > 0:
-        for trial in range(1, cfg["cache_trials"] + 1):
-            print(f"info: cache trial: {trial}/{cfg['cache_trials']}")
+    if int(cfg["cache_trials"]) > 0:
+        for trial in range(1, int(cfg["cache_trials"]) + 1):
+            print(f"info: cache trial: {trial}/{int(cfg['cache_trials'])}")
             send_command("benchmark")
             time.sleep(duration + 15)
 
-    for trial in range(1, cfg["trials"] + 1):
-        print(f"info: recording trial: {trial}/{cfg['trials']}")
+    for trial in range(1, int(cfg["trials"]) + 1):
+        print(f"info: recording trial: {trial}/{int(cfg['trials'])}")
         send_command("benchmark")
 
         try:
@@ -159,9 +158,9 @@ def main():
             print("error: csv log unsuccessful, this may be due to a missing dependency or windows component")
             return
 
-    if cfg["trials"] > 1:
+    if int(cfg["trials"]) > 1:
         raw_csvs = []
-        for trial in range(1, cfg["trials"] + 1):
+        for trial in range(1, int(cfg["trials"]) + 1):
             raw_csvs.append(f"{output_path}\\Trial-{trial}.csv")
 
         aggregate(raw_csvs, f"{output_path}\\Aggregated.csv")
