@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 import ctypes
+import traceback
 from pynput.keyboard import Controller, Key
 
 keyboard = Controller()
@@ -170,4 +171,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit()
+    except Exception:
+        print(traceback.format_exc())
+    finally:
+        input("info: press enter to exit")
