@@ -1,3 +1,4 @@
+import csv
 import time
 import os
 import subprocess
@@ -8,10 +9,10 @@ from typing import Dict, List
 from pynput.keyboard import Controller, Key
 
 
-def aggregate(files: List[str], output_file: str) -> None:
+def aggregate(input_files: List[str], output_file: str) -> None:
     aggregated: List[str] = []
 
-    for file in files:
+    for file in input_files:
         with open(file, "r", encoding="utf-8") as file:
             lines = file.readlines()
             aggregated.extend(lines)
@@ -23,6 +24,27 @@ def aggregate(files: List[str], output_file: str) -> None:
         for line in aggregated:
             if line != column_names:
                 file.write(line)
+
+
+def app_latency(input_file: str, output_file: str) -> None:
+    with open(input_file, "r", encoding="utf-8") as file:
+        contents: List[Dict[str, str]] = list(csv.DictReader(file))
+
+    # convert key names to lowercase because column names changed in a newer version of PresentMon
+    for index, row in enumerate(contents):
+        contents[index] = dict((key.lower(), value) for key, value in row.items())
+
+    with open(output_file, "a", encoding="utf-8") as file:
+        file.write("MsPCLatency\n")
+
+        for i in range(1, len(contents)):
+            ms_input_latency = (
+                float(contents[i]["msbetweenpresents"])
+                + float(contents[i]["msuntildisplayed"])
+                - float(contents[i - 1]["msinpresentapi"])
+            )
+
+            file.write(f"{ms_input_latency:.3f}\n")
 
 
 def parse_config(config_path: str) -> Dict[str, str]:
@@ -161,10 +183,9 @@ def main() -> None:
             print("error: csv log unsuccessful, this may be due to a missing dependency or windows component")
             return
 
-    if int(cfg["trials"]) > 1:
-        raw_csvs = [f"{output_path}\\Trial-{trial}.csv" for trial in range(1, int(cfg["trials"]) + 1)]
-
-        aggregate(raw_csvs, f"{output_path}\\Aggregated.csv")
+    raw_csvs = [f"{output_path}\\Trial-{trial}.csv" for trial in range(1, int(cfg["trials"]) + 1)]
+    aggregate(raw_csvs, f"{output_path}\\Aggregated.csv")
+    app_latency(f"{output_path}\\Aggregated.csv", f"{output_path}\\MsPCLatency.csv")
 
     print(f"info: raw and aggregated CSVs located in: {output_path}\n")
 
