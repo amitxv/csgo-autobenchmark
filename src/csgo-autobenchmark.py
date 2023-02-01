@@ -4,27 +4,13 @@ import subprocess
 import sys
 import ctypes
 import traceback
+from typing import Dict, List
 from pynput.keyboard import Controller, Key
 
-keyboard = Controller()
-ntdll = ctypes.WinDLL("ntdll.dll")
 
+def aggregate(files: List[str], output_file: str) -> None:
+    aggregated: List[str] = []
 
-def keyboard_press(key):
-    time.sleep(0.1)
-    keyboard.press(key)
-    keyboard.release(key)
-
-
-def send_command(command):
-    time.sleep(0.1)
-    for char in command:
-        keyboard_press(char)
-    keyboard_press(Key.enter)
-
-
-def aggregate(files, output_file):
-    aggregated = []
     for file in files:
         with open(file, "r", encoding="utf-8") as file:
             lines = file.readlines()
@@ -39,8 +25,9 @@ def aggregate(files, output_file):
                 file.write(line)
 
 
-def parse_config(config_path):
-    config = {}
+def parse_config(config_path: str) -> Dict[str, str]:
+    config: Dict[str, str] = {}
+
     with open(config_path, "r", encoding="utf-8") as file:
         for line in file:
             if line.startswith("//"):
@@ -55,24 +42,25 @@ def parse_config(config_path):
     return config
 
 
-def timer_resolution(enabled):
-    min_res = ctypes.c_ulong()
-    max_res = ctypes.c_ulong()
-    curr_res = ctypes.c_ulong()
+def timer_resolution(enabled: bool) -> int:
+    ntdll = ctypes.WinDLL("ntdll.dll")
+    min_res, max_res, curr_res = ctypes.c_ulong(), ctypes.c_ulong(), ctypes.c_ulong()
 
     ntdll.NtQueryTimerResolution(ctypes.byref(min_res), ctypes.byref(max_res), ctypes.byref(curr_res))
 
-    if max_res.value <= 10000 and ntdll.NtSetTimerResolution(10000, int(enabled), ctypes.byref(curr_res)) == 0:
-        return 0
-    return 1
+    return ntdll.NtSetTimerResolution(10000, int(enabled), ctypes.byref(curr_res))
 
 
-def main():
+def main() -> None:
     version = "0.3.3"
     stdnull = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
     cfg = parse_config("config.txt")
-    present_mon = "PresentMon-1.6.0-x64.exe"
-    map_options = {1: ("de_dust2", 40), 2: ("de_cache", 45)}
+    present_mon = "PresentMon-1.8.0-x64.exe" if sys.getwindowsversion().major >= 10 else "PresentMon-1.6.0-x64.exe"
+
+    map_options = {
+        1: {"map": "de_dust2", "record_duration": "40"},
+        2: {"map": "de_cache", "record_duration": "45"},
+    }
 
     print(f"csgo-autobenchmark v{version}")
     print("GitHub - https://github.com/amitxv\n")
@@ -86,15 +74,14 @@ def main():
     elif __file__:
         os.chdir(os.path.dirname(__file__))
 
-    if sys.getwindowsversion().major >= 10:
-        present_mon = "PresentMon-1.8.0-x64.exe"
-
     if not os.path.exists(f"bin\\PresentMon\\{present_mon}"):
         print("error: presentmon not found")
         return
 
     try:
-        cs_map, duration = map_options[int(cfg["map"])]
+        map_config = map_options[int(cfg["map"])]
+        cs_map = map_config["map"]
+        record_duration = int(map_config["record_duration"])
     except KeyError:
         print("error: invalid map in config")
         return
@@ -103,70 +90,82 @@ def main():
         print("error: invalid trials or cache_trials in config")
         return
 
-    estimated_time = (40 + ((duration + 15) * int(cfg["cache_trials"])) + ((duration + 15) * int(cfg["trials"]))) / 60
-    print(f"info: estimated time: {round(estimated_time)} minutes approx")
+    estimated_time_sec: int = 43 + (int(cfg["cache_trials"]) + int(cfg["trials"])) * (record_duration + 15)
+    estimated_time_min = estimated_time_sec / 60
+
+    print(f"info: estimated time: {round(estimated_time_min)} minutes approx")
 
     if not int(cfg["skip_confirmation"]):
-        input("press enter to start benchmarking...")
-    print("info: starting in 7 Seconds (tab back into game)")
-    time.sleep(7)
+        input("info: press enter to start benchmarking...")
+
+    print("info: starting in 5 Seconds (tab back into game)")
+    time.sleep(5)
 
     output_path = f"captures\\csgo-autobenchmark-{time.strftime('%d%m%y%H%M%S')}"
     os.makedirs(output_path)
 
     timer_resolution(True)
+    keyboard = Controller()
 
-    keyboard_press(Key.f5)
-    send_command(f"map {cs_map}")
+    # everything beyond this point assumes the user is loaded to the menu screen as stated in the readme
+
+    # open console (console must be bound to f5)
+    keyboard.tap(Key.f5)
+    time.sleep(1)
+
+    # load map
+    keyboard.type(f"map {cs_map}\n")
+
     print(f"info: waiting for {cs_map} to load")
     time.sleep(40)
-    keyboard_press(Key.f5)
-    send_command("exec benchmark")
+
+    keyboard.tap(Key.f5)
+    time.sleep(1)
+
+    # load benchmark config
+    keyboard.type("exec benchmark\n")
+    time.sleep(1)
 
     if int(cfg["cache_trials"]) > 0:
         for trial in range(1, int(cfg["cache_trials"]) + 1):
             print(f"info: cache trial: {trial}/{int(cfg['cache_trials'])}")
-            send_command("benchmark")
-            time.sleep(duration + 15)
+
+            keyboard.type("benchmark\n")
+            time.sleep(record_duration + 15)
 
     for trial in range(1, int(cfg["trials"]) + 1):
         print(f"info: recording trial: {trial}/{int(cfg['trials'])}")
-        send_command("benchmark")
 
-        try:
-            subprocess.run(
-                [
-                    f"bin\\PresentMon\\{present_mon}",
-                    "-stop_existing_session",
-                    "-no_top",
-                    "-delay",
-                    "5",
-                    "-timed",
-                    str(duration),
-                    "-process_name",
-                    "csgo.exe",
-                    "-output_file",
-                    f"{output_path}\\Trial-{trial}.csv",
-                ],
-                timeout=duration + 15,
-                **stdnull,
-                check=False,
-            )
-        except subprocess.TimeoutExpired:
-            pass
+        keyboard.type("benchmark\n")
+
+        with subprocess.Popen(
+            [
+                f"bin\\PresentMon\\{present_mon}",
+                "-stop_existing_session",
+                "-no_top",
+                "-delay",
+                "5",
+                "-timed",
+                str(record_duration),
+                "-process_name",
+                "csgo.exe",
+                "-output_file",
+                f"{output_path}\\Trial-{trial}.csv",
+            ],
+            **stdnull,
+        ) as process:
+            time.sleep(record_duration + 15)
+            process.kill()
 
         if not os.path.exists(f"{output_path}\\Trial-{trial}.csv"):
             print("error: csv log unsuccessful, this may be due to a missing dependency or windows component")
             return
 
     if int(cfg["trials"]) > 1:
-        raw_csvs = []
-        for trial in range(1, int(cfg["trials"]) + 1):
-            raw_csvs.append(f"{output_path}\\Trial-{trial}.csv")
+        raw_csvs = [f"{output_path}\\Trial-{trial}.csv" for trial in range(1, int(cfg["trials"]) + 1)]
 
         aggregate(raw_csvs, f"{output_path}\\Aggregated.csv")
 
-    print("info: finished")
     print(f"info: raw and aggregated CSVs located in: {output_path}\n")
 
 
