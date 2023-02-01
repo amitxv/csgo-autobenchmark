@@ -74,7 +74,7 @@ def timer_resolution(enabled: bool) -> int:
 
 
 def main() -> None:
-    version = "0.3.3"
+    version = "0.4.0"
     stdnull = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
     cfg = parse_config("config.txt")
     present_mon = "PresentMon-1.8.0-x64.exe" if sys.getwindowsversion().major >= 10 else "PresentMon-1.6.0-x64.exe"
