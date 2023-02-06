@@ -162,6 +162,9 @@ def main() -> None:
 
     print(f"info: estimated time: {round(estimated_time_min)} minutes approx")
 
+    for key, value in cfg.items():
+        print(f"info: {key}: {value}")
+
     if not int(cfg["skip_confirmation"]):
         input("info: press enter to start benchmarking...")
 
