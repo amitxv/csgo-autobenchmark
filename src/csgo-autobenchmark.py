@@ -1,11 +1,13 @@
+import argparse
 import csv
-import time
+import ctypes
 import os
 import subprocess
 import sys
-import ctypes
+import time
 import traceback
 from typing import Dict, List
+
 from pynput.keyboard import Controller, Key
 
 
