@@ -79,7 +79,13 @@ def timer_resolution(enabled: bool) -> int:
 def main() -> None:
     version = "0.4.0"
     stdnull = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
-    cfg = {"map": "1", "cache_trials": "1", "trials": "3", "skip_confirmation": "0"}  # default values
+    cfg = {
+        "map": "1",
+        "cache_trials": "1",
+        "trials": "3",
+        "skip_confirmation": "0",
+        "output_path": f"captures\\csgo-autobenchmark-{time.strftime('%d%m%y%H%M%S')}",
+    }  # default values
     present_mon = "PresentMon-1.8.0-x64.exe" if sys.getwindowsversion().major >= 10 else "PresentMon-1.6.0-x64.exe"
 
     map_options = {
@@ -129,6 +135,11 @@ def main() -> None:
         action="store_const",
         const=1,
     )
+    parser.add_argument(
+        "--output_path",
+        metavar="<path>",
+        help="specify the full path to a folder to log CSVs to",
+    )
     args = parser.parse_args()
 
     args_dict = vars(args)  # convert arguments to Dict[str, Any]
@@ -171,8 +182,11 @@ def main() -> None:
     print("info: starting in 5 Seconds (tab back into game)")
     time.sleep(5)
 
-    output_path = f"captures\\csgo-autobenchmark-{time.strftime('%d%m%y%H%M%S')}"
-    os.makedirs(output_path)
+    try:
+        os.makedirs(cfg["output_path"])
+    except FileExistsError:
+        print(f"error: {cfg['output_path']} already exists")
+        return
 
     timer_resolution(True)
     keyboard = Controller()
@@ -220,22 +234,22 @@ def main() -> None:
                 "-process_name",
                 "csgo.exe",
                 "-output_file",
-                f"{output_path}\\Trial-{trial}.csv",
+                f"{cfg['output_path']}\\Trial-{trial}.csv",
             ],
             **stdnull,
         ) as process:
             time.sleep(record_duration + 15)
             process.kill()
 
-        if not os.path.exists(f"{output_path}\\Trial-{trial}.csv"):
+        if not os.path.exists(f"{cfg['output_path']}\\Trial-{trial}.csv"):
             print("error: csv log unsuccessful, this may be due to a missing dependency or windows component")
             return
 
-    raw_csvs = [f"{output_path}\\Trial-{trial}.csv" for trial in range(1, int(cfg["trials"]) + 1)]
-    aggregate(raw_csvs, f"{output_path}\\Aggregated.csv")
-    app_latency(f"{output_path}\\Aggregated.csv", f"{output_path}\\MsPCLatency.csv")
+    raw_csvs = [f"{cfg['output_path']}\\Trial-{trial}.csv" for trial in range(1, int(cfg["trials"]) + 1)]
+    aggregate(raw_csvs, f"{cfg['output_path']}\\Aggregated.csv")
+    app_latency(f"{cfg['output_path']}\\Aggregated.csv", f"{cfg['output_path']}\\MsPCLatency.csv")
 
-    print(f"info: raw and aggregated CSVs located in: {output_path}\n")
+    print(f"info: raw and aggregated CSVs located in: {cfg['output_path']}\n")
 
 
 if __name__ == "__main__":
