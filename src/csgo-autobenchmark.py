@@ -52,18 +52,19 @@ def app_latency(input_file: str, output_file: str) -> None:
 def parse_config(config_path: str) -> Dict[str, str]:
     config: Dict[str, str] = {}
 
-    with open(config_path, "r", encoding="utf-8") as file:
-        for line in file:
-            if line.startswith("//"):
-                continue
+    try:
+        with open(config_path, "r", encoding="utf-8") as file:
+            for line in file:
+                if line.startswith("//"):
+                    continue
 
-            line = line.strip("\n")
-            setting, _, value = line.rpartition("=")
+                line = line.strip("\n")
+                setting, _, value = line.rpartition("=")
 
-            if setting and value:
-                config[setting] = value
-
-    return config
+                if setting and value:
+                    config[setting] = value
+    finally:
+        return config
 
 
 def timer_resolution(enabled: bool) -> int:
@@ -78,7 +79,7 @@ def timer_resolution(enabled: bool) -> int:
 def main() -> None:
     version = "0.4.0"
     stdnull = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
-    cfg = parse_config("config.txt")
+    cfg = {"map": "1", "cache_trials": "1", "trials": "3", "skip_confirmation": "0"}  # default values
     present_mon = "PresentMon-1.8.0-x64.exe" if sys.getwindowsversion().major >= 10 else "PresentMon-1.6.0-x64.exe"
 
     map_options = {
@@ -97,6 +98,48 @@ def main() -> None:
         os.chdir(os.path.dirname(sys.executable))
     elif __file__:
         os.chdir(os.path.dirname(__file__))
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"csgo-autobenchmark v{version}",
+    )
+    parser.add_argument(
+        "--map",
+        metavar="<map choice>",
+        help="1 for de_dust2, 2 for de_cache",
+        type=int,
+    )
+    parser.add_argument(
+        "--cache_trials",
+        metavar="<amount>",
+        help="number of trials to execute to build cache",
+        type=int,
+    )
+    parser.add_argument(
+        "--trials",
+        metavar="<amount>",
+        help="number of trials to benchmark",
+        type=int,
+    )
+    parser.add_argument(
+        "--skip_confirmation",
+        help="use this argument to skip start confirmation",
+        action="store_const",
+        const=1,
+    )
+    args = parser.parse_args()
+
+    args_dict = vars(args)  # convert arguments to Dict[str, Any]
+    config_file = parse_config("config.txt")
+
+    # load settings from config and arguments
+    # note: arguments have a higher precedence
+    for key in cfg:
+        for _dict in (config_file, args_dict):
+            if _dict.get(key) is not None:
+                cfg[key] = str(_dict[key])
 
     if not os.path.exists(f"bin\\PresentMon\\{present_mon}"):
         print("error: presentmon not found")
