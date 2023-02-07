@@ -161,11 +161,11 @@ def main() -> None:
         cs_map = map_config["map"]
         record_duration = int(map_config["record_duration"])
     except KeyError:
-        print("error: invalid map in config")
+        print("error: invalid map specified")
         return
 
     if int(cfg["trials"]) <= 0 or int(cfg["cache_trials"]) < 0:
-        print("error: invalid trials or cache_trials in config")
+        print("error: invalid trials or cache_trials specified")
         return
 
     estimated_time_sec: int = 43 + (int(cfg["cache_trials"]) + int(cfg["trials"])) * (record_duration + 15)
