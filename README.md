@@ -12,7 +12,7 @@ Automatic csgo benchmarking to mitigate systematic error using scripts from [csg
     bind F5 "toggleconsole"
     ```
 
-- Do not have csgo installed on a HDD due to long loading times
+- Do not have csgo installed on an HDD due to long loading times
 
 - Download and extract the latest release from the [releases tab](https://github.com/amitxv/csgo-autobenchmark/releases)
 
@@ -23,6 +23,6 @@ Automatic csgo benchmarking to mitigate systematic error using scripts from [csg
 
 - Launch csgo to the lobby with the console closed
 
-- Run **start.bat** and press enter when ready. There is a 7 second timeout to allow you to tab back into the game to give csgo foreground priority
+- Run **start.bat** and press enter when ready. There is a 7-second timeout to allow you to tab back into the game to give csgo foreground priority
 
-- Do not touch your PC at all after after this stage until the estimated time is up
+- Do not touch your PC at all after this stage until the estimated time is up
