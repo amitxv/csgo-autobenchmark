@@ -8,7 +8,7 @@ Automatic csgo benchmarking to mitigate systematic error using scripts from [csg
 
 - Bind the console hotkey to F5 by running the command below in the console
 
-    ```txt
+    ```
     bind F5 "toggleconsole"
     ```
 
