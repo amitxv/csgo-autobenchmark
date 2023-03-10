@@ -23,6 +23,6 @@ Automatic csgo benchmarking to mitigate systematic error using scripts from [csg
 
 - Launch csgo to the lobby with the console closed
 
-- Run **start.bat** and press enter when ready. There is a 7-second timeout to allow you to tab back into the game to give csgo foreground priority
+- Run **csgo-autobenchmark** through the command-line and press enter when ready to start benchmarking. here is a 7-second timeout to allow you to tab back into the game to give csgo foreground priority
 
 - Do not touch your PC at all after this stage until the estimated time is up
