@@ -1,7 +1,5 @@
 # csgo-autobenchmark
 
-Automatic csgo benchmarking to mitigate systematic error using scripts from [csgo-benchmark](https://github.com/samisalreadytaken/csgo-benchmark)
-
 ## Usage
 
 - Enable developer console in the game settings
