@@ -1,5 +1,7 @@
 # csgo-autobenchmark
 
+[![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/amitxv)
+
 ## Usage
 
 - Enable developer console in the game settings
