@@ -86,7 +86,7 @@ def main() -> None:
         "skip_confirmation": "0",
         "output_path": f"captures\\csgo-autobenchmark-{time.strftime('%d%m%y%H%M%S')}",
     }  # default values
-    present_mon = "PresentMon-1.8.0-x64.exe" if sys.getwindowsversion().major >= 10 else "PresentMon-1.6.0-x64.exe"
+    presentmon = f"PresentMon-{'1.8.0' if sys.getwindowsversion().major >= 10 else '1.6.0'}-x64.exe"
 
     map_options = {
         1: {"map": "de_dust2", "record_duration": "40"},
@@ -152,7 +152,7 @@ def main() -> None:
             if _dict.get(key) is not None:
                 cfg[key] = str(_dict[key])
 
-    if not os.path.exists(f"bin\\PresentMon\\{present_mon}"):
+    if not os.path.exists(f"bin\\PresentMon\\{presentmon}"):
         print("error: presentmon not found")
         return
 
@@ -224,7 +224,7 @@ def main() -> None:
 
         with subprocess.Popen(
             [
-                f"bin\\PresentMon\\{present_mon}",
+                f"bin\\PresentMon\\{presentmon}",
                 "-stop_existing_session",
                 "-no_top",
                 "-delay",
