@@ -76,7 +76,7 @@ def timer_resolution(enabled: bool) -> int:
     return ntdll.NtSetTimerResolution(10000, int(enabled), ctypes.byref(curr_res))
 
 
-def main() -> None:
+def main() -> int:
     version = "0.4.0"
     stdnull = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
     cfg = {
@@ -98,7 +98,7 @@ def main() -> None:
 
     if not ctypes.windll.shell32.IsUserAnAdmin():
         print("error: administrator privileges required")
-        return
+        return 1
 
     if getattr(sys, "frozen", False):
         os.chdir(os.path.dirname(sys.executable))
@@ -154,7 +154,7 @@ def main() -> None:
 
     if not os.path.exists(f"bin\\PresentMon\\{presentmon}"):
         print("error: presentmon not found")
-        return
+        return 1
 
     try:
         map_config = map_options[int(cfg["map"])]
@@ -162,11 +162,11 @@ def main() -> None:
         record_duration = int(map_config["record_duration"])
     except KeyError:
         print("error: invalid map specified")
-        return
+        return 1
 
     if int(cfg["trials"]) <= 0 or int(cfg["cache_trials"]) < 0:
         print("error: invalid trials or cache_trials specified")
-        return
+        return 1
 
     estimated_time_sec: int = 43 + (int(cfg["cache_trials"]) + int(cfg["trials"])) * (record_duration + 15)
     estimated_time_min = estimated_time_sec / 60
@@ -186,7 +186,7 @@ def main() -> None:
         os.makedirs(cfg["output_path"])
     except FileExistsError:
         print(f"error: {cfg['output_path']} already exists")
-        return
+        return 1
 
     timer_resolution(True)
     keyboard = Controller()
@@ -243,7 +243,7 @@ def main() -> None:
 
         if not os.path.exists(f"{cfg['output_path']}\\Trial-{trial}.csv"):
             print("error: csv log unsuccessful, this may be due to a missing dependency or windows component")
-            return
+            return 1
 
     raw_csvs = [f"{cfg['output_path']}\\Trial-{trial}.csv" for trial in range(1, int(cfg["trials"]) + 1)]
     aggregate(raw_csvs, f"{cfg['output_path']}\\Aggregated.csv")
@@ -251,14 +251,18 @@ def main() -> None:
 
     print(f"info: raw and aggregated CSVs located in: {cfg['output_path']}\n")
 
+    return 0
+
 
 if __name__ == "__main__":
+    __exit_code__ = 0
     try:
-        main()
+        __exit_code__ = main()
     except KeyboardInterrupt:
-        sys.exit()
+        sys.exit(1)
     except Exception:
         print(traceback.format_exc())
+        __exit_code__ = 1
     finally:
         kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
         process_array = (ctypes.c_uint * 1)()
@@ -266,3 +270,5 @@ if __name__ == "__main__":
         # only pause if script was ran by double-clicking
         if num_processes < 3:
             input("info: press enter to exit")
+
+        sys.exit(__exit_code__)
