@@ -30,6 +30,7 @@ jobs:
         run: |
           mkdir csgo-autobenchmark
           move "dist\csgo-autobenchmark.exe" csgo-autobenchmark
+          move "src\bin" csgo-autobenchmark
           move "src\prerequisites" csgo-autobenchmark
           move "src\config.txt" csgo-autobenchmark
 
