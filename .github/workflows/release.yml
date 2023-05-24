@@ -1,0 +1,44 @@
+name: Create release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8.6
+
+      - name: Install pyinstaller
+        run: python -m pip install pyinstaller
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Build executable
+        run: pyinstaller "src\csgo-autobenchmark.py" --onefile
+
+      - name: Create folder structure
+        run: |
+          mkdir csgo-autobenchmark
+          move "dist\csgo-autobenchmark.exe" csgo-autobenchmark
+          move "src\prerequisites" csgo-autobenchmark
+          move "src\config.txt" csgo-autobenchmark
+
+      - name: Zip csgo-autobenchmark
+        run: Compress-Archive -Path csgo-autobenchmark -DestinationPath csgo-autobenchmark.zip
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          files: csgo-autobenchmark.zip
