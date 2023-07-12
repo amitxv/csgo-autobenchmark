@@ -93,7 +93,7 @@ def main() -> int:
         2: {"map": "de_cache", "record_duration": "45"},
     }
 
-    print(f"csgo-autobenchmark Version {version}\nCopyright (C) github.com/amitxv. All rights reserved.\n")
+    print(f"csgo-autobenchmark Version {version} - GPLv3\nGitHub - https://github.com/amitxv\n")
 
     if not ctypes.windll.shell32.IsUserAnAdmin():
         print("error: administrator privileges required")
