@@ -86,8 +86,10 @@ def main() -> int:
         "skip_confirmation": "0",
         "output_path": f"captures\\csgo-autobenchmark-{time.strftime('%d%m%y%H%M%S')}",
     }  # default values
-    presentmon = f"PresentMon-{'1.8.0' if sys.getwindowsversion().major >= 10 else '1.6.0'}-x64.exe"
 
+    windows_version_info = sys.getwindowsversion()
+    # use 1.6.0 on Windows Server
+    presentmon = f"PresentMon-{'1.8.0' if windows_version_info.major >= 10 and windows_version_info.product_type != 3 else '1.6.0'}-x64.exe"
     map_options = {
         1: {"map": "de_dust2", "record_duration": "40"},
         2: {"map": "de_cache", "record_duration": "45"},
