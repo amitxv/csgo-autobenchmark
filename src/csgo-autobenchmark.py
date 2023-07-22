@@ -77,7 +77,7 @@ def timer_resolution(enabled: bool) -> int:
 
 
 def main() -> int:
-    version = "0.4.0"
+    version = "0.4.1"
     stdnull = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
     cfg = {
         "map": "1",
