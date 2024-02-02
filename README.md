@@ -1,5 +1,7 @@
 # csgo-autobenchmark
 
+[![Downloads](https://img.shields.io/github/downloads/amitxv/csgo-autobenchmark/total.svg)](https://github.com/amitxv/csgo-autobenchmark/releases)
+
 [![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/amitxv)
 
 ## Usage
