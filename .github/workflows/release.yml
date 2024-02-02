@@ -34,7 +34,7 @@ jobs:
           move "src\prerequisites" csgo-autobenchmark
           move "src\config.txt" csgo-autobenchmark
 
-      - name: Zip csgo-autobenchmark
+      - name: Zip release
         run: Compress-Archive -Path csgo-autobenchmark -DestinationPath csgo-autobenchmark.zip
 
       - name: Upload to release
