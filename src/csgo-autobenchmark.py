@@ -6,17 +6,17 @@ import subprocess
 import sys
 import time
 import traceback
-from typing import Dict, List
 
 from pynput.keyboard import Controller, Key
 
 
-def aggregate(input_files: List[str], output_file: str) -> None:
-    aggregated: List[str] = []
+def aggregate(input_files: list[str], output_file: str) -> None:
+    """Aggregate multiple CSV files."""
+    aggregated: list[str] = []
 
     for file in input_files:
-        with open(file, "r", encoding="utf-8") as file:
-            lines = file.readlines()
+        with open(file, encoding="utf-8") as input_file:
+            lines = input_file.readlines()
             aggregated.extend(lines)
 
     with open(output_file, "a", encoding="utf-8") as file:
@@ -29,12 +29,13 @@ def aggregate(input_files: List[str], output_file: str) -> None:
 
 
 def app_latency(input_file: str, output_file: str) -> None:
-    with open(input_file, "r", encoding="utf-8") as file:
-        contents: List[Dict[str, str]] = list(csv.DictReader(file))
+    """Calculate application latency from CSV and output to a new CSV."""
+    with open(input_file, encoding="utf-8") as file:
+        contents: list[dict[str, str]] = list(csv.DictReader(file))
 
     # convert key names to lowercase because column names changed in a newer version of PresentMon
     for index, row in enumerate(contents):
-        contents[index] = dict((key.lower(), value) for key, value in row.items())
+        contents[index] = {key.lower(): value for key, value in row.items()}
 
     with open(output_file, "a", encoding="utf-8") as file:
         file.write("MsPCLatency\n")
@@ -49,17 +50,18 @@ def app_latency(input_file: str, output_file: str) -> None:
             file.write(f"{ms_input_latency:.3f}\n")
 
 
-def parse_config(config_path: str) -> Dict[str, str]:
-    config: Dict[str, str] = {}
+def parse_config(config_path: str) -> dict[str, str]:
+    """Parse configuration file."""
+    config: dict[str, str] = {}
 
     try:
-        with open(config_path, "r", encoding="utf-8") as file:
+        with open(config_path, encoding="utf-8") as file:
             for line in file:
                 if line.startswith("//"):
                     continue
 
-                line = line.strip("\n")
-                setting, _, value = line.rpartition("=")
+                stripped_line = line.strip("\n")
+                setting, _, value = stripped_line.rpartition("=")
 
                 if setting and value:
                     config[setting] = value
@@ -68,17 +70,22 @@ def parse_config(config_path: str) -> Dict[str, str]:
 
 
 def timer_resolution(enabled: bool) -> int:
+    """Configure the Timer Resolution."""
     ntdll = ctypes.WinDLL("ntdll.dll")
     min_res, max_res, curr_res = ctypes.c_ulong(), ctypes.c_ulong(), ctypes.c_ulong()
 
-    ntdll.NtQueryTimerResolution(ctypes.byref(min_res), ctypes.byref(max_res), ctypes.byref(curr_res))
+    ntdll.NtQueryTimerResolution(
+        ctypes.byref(min_res),
+        ctypes.byref(max_res),
+        ctypes.byref(curr_res),
+    )
 
     return ntdll.NtSetTimerResolution(10000, int(enabled), ctypes.byref(curr_res))
 
 
-def main() -> int:
+def main() -> int:  # noqa: PLR0911, C901, PLR0912, D103, PLR0915
     version = "0.4.2"
-    stdnull = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
+
     cfg = {
         "map": "1",
         "cache_trials": "1",
@@ -95,7 +102,9 @@ def main() -> int:
         2: {"map": "de_cache", "record_duration": "45"},
     }
 
-    print(f"csgo-autobenchmark Version {version} - GPLv3\nGitHub - https://github.com/amitxv\n")
+    print(
+        f"csgo-autobenchmark Version {version} - GPLv3\nGitHub - https://github.com/amitxv\n",
+    )
 
     if not ctypes.windll.shell32.IsUserAnAdmin():
         print("error: administrator privileges required")
@@ -143,7 +152,7 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    args_dict = vars(args)  # convert arguments to Dict[str, Any]
+    args_dict = vars(args)  # convert arguments to dict[str, Any]
     config_file = parse_config("config.txt")
 
     # load settings from config and arguments
@@ -169,7 +178,9 @@ def main() -> int:
         print("error: invalid trials or cache_trials specified")
         return 1
 
-    estimated_time_sec: int = 43 + (int(cfg["cache_trials"]) + int(cfg["trials"])) * (record_duration + 15)
+    estimated_time_sec: int = 43 + (int(cfg["cache_trials"]) + int(cfg["trials"])) * (
+        record_duration + 15
+    )
     estimated_time_min = estimated_time_sec / 60
 
     print(f"info: estimated time: {round(estimated_time_min)} minutes approx")
@@ -189,7 +200,7 @@ def main() -> int:
         print(f"error: {cfg['output_path']} already exists")
         return 1
 
-    timer_resolution(True)
+    timer_resolution(enabled=True)
     keyboard = Controller()
 
     # everything beyond this point assumes the user is loaded to the menu screen as stated in the readme
@@ -237,18 +248,27 @@ def main() -> int:
                 "-output_file",
                 f"{cfg['output_path']}\\Trial-{trial}.csv",
             ],
-            **stdnull,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
         ) as process:
             time.sleep(record_duration + 15)
             process.kill()
 
         if not os.path.exists(f"{cfg['output_path']}\\Trial-{trial}.csv"):
-            print("error: csv log unsuccessful, this may be due to a missing dependency or windows component")
+            print(
+                "error: csv log unsuccessful, this may be due to a missing dependency or windows component",
+            )
             return 1
 
-    raw_csvs = [f"{cfg['output_path']}\\Trial-{trial}.csv" for trial in range(1, int(cfg["trials"]) + 1)]
+    raw_csvs = [
+        f"{cfg['output_path']}\\Trial-{trial}.csv"
+        for trial in range(1, int(cfg["trials"]) + 1)
+    ]
     aggregate(raw_csvs, f"{cfg['output_path']}\\Aggregated.csv")
-    app_latency(f"{cfg['output_path']}\\Aggregated.csv", f"{cfg['output_path']}\\MsPCLatency.csv")
+    app_latency(
+        f"{cfg['output_path']}\\Aggregated.csv",
+        f"{cfg['output_path']}\\MsPCLatency.csv",
+    )
 
     print(f"info: raw and aggregated CSVs located in: {cfg['output_path']}\n")
 
@@ -265,11 +285,5 @@ if __name__ == "__main__":
         print(traceback.format_exc())
         __exit_code__ = 1
     finally:
-        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
-        process_array = (ctypes.c_uint * 1)()
-        num_processes = kernel32.GetConsoleProcessList(process_array, 1)
-        # only pause if script was ran by double-clicking
-        if num_processes < 3:
-            input("info: press enter to exit")
-
+        input("info: press enter to exit")
         sys.exit(__exit_code__)
