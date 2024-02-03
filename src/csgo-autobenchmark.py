@@ -281,5 +281,11 @@ if __name__ == "__main__":
         print(traceback.format_exc())
         __exit_code__ = 1
     finally:
-        input("info: press enter to exit")
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        process_array = (ctypes.c_uint * 1)()
+        num_processes = kernel32.GetConsoleProcessList(process_array, 1)
+        # only pause if script was ran by double-clicking
+        if num_processes < 3:
+            input("info: press enter to exit")
+
         sys.exit(__exit_code__)
