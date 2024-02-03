@@ -11,7 +11,6 @@ from pynput.keyboard import Controller, Key
 
 
 def aggregate(input_files: list[str], output_file: str) -> None:
-    """Aggregate multiple CSV files."""
     aggregated: list[str] = []
 
     for file in input_files:
@@ -29,7 +28,6 @@ def aggregate(input_files: list[str], output_file: str) -> None:
 
 
 def app_latency(input_file: str, output_file: str) -> None:
-    """Calculate application latency from CSV and output to a new CSV."""
     with open(input_file, encoding="utf-8") as file:
         contents: list[dict[str, str]] = list(csv.DictReader(file))
 
@@ -51,7 +49,6 @@ def app_latency(input_file: str, output_file: str) -> None:
 
 
 def parse_config(config_path: str) -> dict[str, str]:
-    """Parse configuration file."""
     config: dict[str, str] = {}
 
     try:
@@ -70,7 +67,6 @@ def parse_config(config_path: str) -> dict[str, str]:
 
 
 def timer_resolution(enabled: bool) -> int:
-    """Configure the Timer Resolution."""
     ntdll = ctypes.WinDLL("ntdll.dll")
     min_res, max_res, curr_res = ctypes.c_ulong(), ctypes.c_ulong(), ctypes.c_ulong()
 
