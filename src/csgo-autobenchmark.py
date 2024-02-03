@@ -79,7 +79,7 @@ def timer_resolution(enabled: bool) -> int:
     return ntdll.NtSetTimerResolution(10000, int(enabled), ctypes.byref(curr_res))
 
 
-def main() -> int:  # noqa: PLR0911, C901, PLR0912, D103, PLR0915
+def main() -> int:
     version = "0.4.2"
 
     cfg = {
