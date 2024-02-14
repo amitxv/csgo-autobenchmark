@@ -1,8 +1,11 @@
 name: Create release
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version of the program to build. This will be used for the tag and release name."
+        required: true
 
 jobs:
   build:
@@ -37,9 +40,10 @@ jobs:
       - name: Zip release
         run: Compress-Archive -Path csgo-autobenchmark -DestinationPath csgo-autobenchmark.zip
 
-      - name: Upload to release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create release
+        uses: ncipollo/release-action@v1
         with:
-          files: csgo-autobenchmark.zip
+          tag: ${{ inputs.version }}
+          name: ${{ inputs.version }}
+          artifacts: csgo-autobenchmark.zip
+          generateReleaseNotes: true
