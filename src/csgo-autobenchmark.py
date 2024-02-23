@@ -174,9 +174,7 @@ def main() -> int:
         print("error: invalid trials or cache_trials specified")
         return 1
 
-    estimated_time_sec: int = 43 + (int(cfg["cache_trials"]) + int(cfg["trials"])) * (
-        record_duration + 15
-    )
+    estimated_time_sec: int = 43 + (int(cfg["cache_trials"]) + int(cfg["trials"])) * (record_duration + 15)
     estimated_time_min = estimated_time_sec / 60
 
     print(f"info: estimated time: {round(estimated_time_min)} minutes approx")
@@ -256,10 +254,7 @@ def main() -> int:
             )
             return 1
 
-    raw_csvs = [
-        f"{cfg['output_path']}\\Trial-{trial}.csv"
-        for trial in range(1, int(cfg["trials"]) + 1)
-    ]
+    raw_csvs = [f"{cfg['output_path']}\\Trial-{trial}.csv" for trial in range(1, int(cfg["trials"]) + 1)]
     aggregate(raw_csvs, f"{cfg['output_path']}\\Aggregated.csv")
     app_latency(
         f"{cfg['output_path']}\\Aggregated.csv",
