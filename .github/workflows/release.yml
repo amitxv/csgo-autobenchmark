@@ -36,15 +36,15 @@ jobs:
         run: python -m pip install -r requirements.txt
 
       - name: Build executable
-        run: pyinstaller "src\csgo-autobenchmark.py" --onefile
+        run: pyinstaller src\csgo-autobenchmark.py --onefile
 
       - name: Create folder structure
         run: |
           mkdir csgo-autobenchmark
-          move "dist\csgo-autobenchmark.exe" csgo-autobenchmark
-          move "src\bin" csgo-autobenchmark
-          move "src\prerequisites" csgo-autobenchmark
-          move "src\config.txt" csgo-autobenchmark
+          move dist\csgo-autobenchmark.exe csgo-autobenchmark
+          move src\bin csgo-autobenchmark
+          move src\prerequisites csgo-autobenchmark
+          move src\config.txt csgo-autobenchmark
 
       - name: Zip release
         run: Compress-Archive -Path csgo-autobenchmark -DestinationPath csgo-autobenchmark.zip
