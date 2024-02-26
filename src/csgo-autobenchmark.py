@@ -286,6 +286,6 @@ if __name__ == "__main__":
         num_processes = kernel32.GetConsoleProcessList(process_array, 1)
         # only pause if script was ran by double-clicking
         if num_processes < 3:
-            input("info: press enter to exit")
+            input("press enter to exit")
 
         sys.exit(__exit_code__)
