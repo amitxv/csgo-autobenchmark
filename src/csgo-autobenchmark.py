@@ -1,6 +1,7 @@
 import argparse
 import csv
 import ctypes
+import logging
 import os
 import subprocess
 import sys
@@ -8,6 +9,8 @@ import time
 import traceback
 
 from pynput.keyboard import Controller, Key
+
+logger = logging.getLogger("CLI")
 
 
 def aggregate(input_files: list[str], output_file: str) -> None:
@@ -80,6 +83,8 @@ def timer_resolution(enabled: bool) -> int:
 
 
 def main() -> int:
+    logging.basicConfig(format="[%(name)s] %(levelname)s: %(message)s", level=logging.INFO)
+
     version = "0.4.2"
 
     cfg = {
@@ -103,7 +108,7 @@ def main() -> int:
     )
 
     if not ctypes.windll.shell32.IsUserAnAdmin():
-        print("error: administrator privileges required")
+        logger.error("administrator privileges required")
         return 1
 
     if getattr(sys, "frozen", False):
@@ -159,7 +164,7 @@ def main() -> int:
                 cfg[key] = str(_dict[key])
 
     if not os.path.exists(f"bin\\PresentMon\\{presentmon}"):
-        print("error: presentmon not found")
+        logger.error("presentmon not found")
         return 1
 
     try:
@@ -167,31 +172,31 @@ def main() -> int:
         cs_map = map_config["map"]
         record_duration = int(map_config["record_duration"])
     except KeyError:
-        print("error: invalid map specified")
+        logger.error("invalid map specified")
         return 1
 
     if int(cfg["trials"]) <= 0 or int(cfg["cache_trials"]) < 0:
-        print("error: invalid trials or cache_trials specified")
+        logger.error("invalid trials or cache_trials specified")
         return 1
 
     estimated_time_sec: int = 43 + (int(cfg["cache_trials"]) + int(cfg["trials"])) * (record_duration + 15)
     estimated_time_min = estimated_time_sec / 60
 
-    print(f"info: estimated time: {round(estimated_time_min)} minutes approx")
+    logger.info("estimated time: %d minutes approx", round(estimated_time_min))
 
     for key, value in cfg.items():
-        print(f"info: {key}: {value}")
+        logger.info("%s: %s", key, value)
 
     if not int(cfg["skip_confirmation"]):
-        input("info: press enter to start benchmarking...")
+        input("press enter to start benchmarking...")
 
-    print("info: starting in 5 Seconds (tab back into game)")
+    logger.info("starting in 5 Seconds (tab back into game)")
     time.sleep(5)
 
     try:
         os.makedirs(cfg["output_path"])
     except FileExistsError:
-        print(f"error: {cfg['output_path']} already exists")
+        logger.error("%s already exists", cfg["output_path"])
         return 1
 
     timer_resolution(enabled=True)
@@ -206,7 +211,7 @@ def main() -> int:
     # load map
     keyboard.type(f"map {cs_map}\n")
 
-    print(f"info: waiting for {cs_map} to load")
+    logger.info("waiting for %s to load", cs_map)
     time.sleep(40)
 
     keyboard.tap(Key.f5)
@@ -218,13 +223,13 @@ def main() -> int:
 
     if int(cfg["cache_trials"]) > 0:
         for trial in range(1, int(cfg["cache_trials"]) + 1):
-            print(f"info: cache trial: {trial}/{int(cfg['cache_trials'])}")
+            logger.info("cache trial: %d/%d", trial, int(cfg["cache_trials"]))
 
             keyboard.type("benchmark\n")
             time.sleep(record_duration + 15)
 
     for trial in range(1, int(cfg["trials"]) + 1):
-        print(f"info: recording trial: {trial}/{int(cfg['trials'])}")
+        logger.info("recording trial: %d/%d", trial, int(cfg["trials"]))
 
         keyboard.type("benchmark\n")
 
@@ -249,8 +254,8 @@ def main() -> int:
             process.kill()
 
         if not os.path.exists(f"{cfg['output_path']}\\Trial-{trial}.csv"):
-            print(
-                "error: csv log unsuccessful, this may be due to a missing dependency or windows component",
+            logger.error(
+                "csv log unsuccessful, this may be due to a missing dependency or windows component",
             )
             return 1
 
@@ -261,7 +266,7 @@ def main() -> int:
         f"{cfg['output_path']}\\MsPCLatency.csv",
     )
 
-    print(f"info: raw and aggregated CSVs located in: {cfg['output_path']}\n")
+    logger.info("raw and aggregated CSVs located in: %s\n", cfg["output_path"])
 
     return 0
 
