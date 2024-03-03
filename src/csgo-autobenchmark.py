@@ -129,7 +129,7 @@ def main() -> int:
         type=int,
     )
     parser.add_argument(
-        "--cache_trials",
+        "--cache-trials",
         metavar="<amount>",
         help="number of trials to execute to build cache",
         type=int,
@@ -141,13 +141,13 @@ def main() -> int:
         type=int,
     )
     parser.add_argument(
-        "--skip_confirmation",
+        "--skip-confirmation",
         help="use this argument to skip start confirmation",
         action="store_const",
         const=1,
     )
     parser.add_argument(
-        "--output_path",
+        "--output-path",
         metavar="<path>",
         help="specify the full path to a folder to log CSVs to",
     )
