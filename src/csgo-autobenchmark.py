@@ -176,7 +176,7 @@ def main() -> int:
         return 1
 
     if int(cfg["trials"]) <= 0 or int(cfg["cache_trials"]) < 0:
-        logger.error("invalid trials or cache_trials specified")
+        logger.error("invalid trials or cache trials specified")
         return 1
 
     estimated_time_sec: int = 43 + (int(cfg["cache_trials"]) + int(cfg["trials"])) * (record_duration + 15)
