@@ -85,7 +85,7 @@ def timer_resolution(enabled: bool) -> int:
 def main() -> int:
     logging.basicConfig(format="[%(name)s] %(levelname)s: %(message)s", level=logging.INFO)
 
-    version = "0.4.2"
+    version = "0.5.0"
 
     cfg = {
         "map": "1",
