@@ -2,8 +2,12 @@ function main() {
     # pack executable
     pyinstaller src\csgo-autobenchmark.py --onefile
 
+    if (Test-Path "csgo-autobenchmark") {
+        Remove-Item -Path "csgo-autobenchmark" -Recurse
+    }
+
     # create folder structure
-    mkdir csgo-autobenchmark
+    New-Item -ItemType Directory -Path csgo-autobenchmark
     Move-Item dist\csgo-autobenchmark.exe csgo-autobenchmark
     Move-Item src\bin csgo-autobenchmark
     Move-Item src\prerequisites csgo-autobenchmark
