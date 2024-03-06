@@ -3,6 +3,7 @@ function main() {
         Remove-Item -Path ".\build\" -Recurse
     }
 
+    # entrypoint relative to .\build\pyinstaller\
     $entryPoint = "..\..\csgo_autobenchmark\main.py"
 
     # create folder structure
