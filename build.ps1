@@ -3,13 +3,15 @@ function main() {
         Remove-Item -Path ".\build\" -Recurse
     }
 
+    $entryPoint = "..\..\csgo_autobenchmark\main.py"
+
     # create folder structure
     New-Item -ItemType Directory -Path ".\build\csgo-autobenchmark\"
 
     # pack executable
     New-Item -ItemType Directory -Path ".\build\pyinstaller\"
     Push-Location ".\build\pyinstaller\"
-    pyinstaller "..\..\csgo_autobenchmark\main.py" --onefile --name csgo-autobenchmark
+    pyinstaller $entryPoint --onefile --name csgo-autobenchmark
     Pop-Location
 
     # create final package
