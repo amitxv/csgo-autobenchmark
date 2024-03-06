@@ -1,19 +1,22 @@
 function main() {
-    # pack executable
-    pyinstaller ".\src\csgo-autobenchmark.py" --onefile
-
-    if (Test-Path ".\csgo-autobenchmark\") {
-        Remove-Item -Path ".\csgo-autobenchmark\" -Recurse
+    if (Test-Path ".\build\") {
+        Remove-Item -Path ".\build\" -Recurse
     }
 
     # create folder structure
-    New-Item -ItemType Directory -Path ".\csgo-autobenchmark\"
+    New-Item -ItemType Directory -Path ".\build\csgo-autobenchmark\"
+
+    # pack executable
+    New-Item -ItemType Directory -Path ".\build\pyinstaller\"
+    Push-Location ".\build\pyinstaller\"
+    pyinstaller "..\..\csgo_autobenchmark\main.py" --onefile --name csgo-autobenchmark
+    Pop-Location
 
     # create final package
-    Move-Item ".\dist\csgo-autobenchmark.exe" ".\csgo-autobenchmark\"
-    Move-Item ".\src\bin\" ".\csgo-autobenchmark\"
-    Move-Item ".\src\prerequisites\" ".\csgo-autobenchmark\"
-    Move-Item ".\src\config.txt\" ".\csgo-autobenchmark\"
+    Copy-Item ".\build\pyinstaller\dist\csgo-autobenchmark.exe" ".\build\csgo-autobenchmark\"
+    Copy-Item ".\csgo_autobenchmark\bin\" ".\build\csgo-autobenchmark\" -Recurse
+    Copy-Item ".\csgo_autobenchmark\prerequisites\" ".\build\csgo-autobenchmark\" -Recurse
+    Copy-Item ".\csgo_autobenchmark\config.txt" ".\build\csgo-autobenchmark\"
 
     return 0
 }
