@@ -18,13 +18,12 @@
 
 - Download and extract the latest release from the [releases tab](https://github.com/amitxv/csgo-autobenchmark/releases)
 
-- From the **prerequisites** folder
+- Move ``video.txt`` to ``.\Steam\Userdata\*\730\local\cfg\``
 
-    - Move the **csgo** folder to ``.\steamapps\common\Counter-Strike Global Offensive``
-    - Move **video.txt** to ``.\Steam\Userdata\*\730\local\cfg``
+- Move the ``csgo`` folder in [csgo-autobenchmark](https://github.com/samisalreadytaken/csgo-benchmark) to ``.\steamapps\common\Counter-Strike Global Offensive``
 
 - Launch csgo to the lobby with the console closed
 
-- Run **csgo-autobenchmark** through the command-line and press enter when ready to start benchmarking. There is a 7-second timeout to allow you to tab back into the game to give csgo foreground priority
+- Run csgo-autobenchmark through the command-line and press enter when ready to start benchmarking. There is a 7-second timeout to allow you to tab back into the game to give csgo foreground priority
 
 - Do not touch your PC at all after this stage until the estimated time is up
