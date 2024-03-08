@@ -17,10 +17,10 @@ function main() {
     $entryPoint = "..\..\csgo_autobenchmark\main.py"
 
     # create folder structure
-    New-Item -ItemType Directory -Path ".\build\csgo-autobenchmark\"
+    mkdir ".\build\csgo-autobenchmark\"
 
     # pack executable
-    New-Item -ItemType Directory -Path ".\build\pyinstaller\"
+    mkdir ".\build\pyinstaller\"
     Push-Location ".\build\pyinstaller\"
     pyinstaller $entryPoint --onefile --name csgo-autobenchmark
     Pop-Location
