@@ -43,7 +43,7 @@ jobs:
         run: .\build.ps1
 
       - name: Zip release
-        run: Compress-Archive -Path csgo-autobenchmark -DestinationPath csgo-autobenchmark.zip
+        run: Compress-Archive -Path ".\build\csgo-autobenchmark\" -DestinationPath ".\csgo-autobenchmark.zip"
 
       - name: Create release
         uses: ncipollo/release-action@v1
